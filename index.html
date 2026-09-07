@@ -1,495 +1,780 @@
 <!DOCTYPE html>
-<html lang="az">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anur Qoradalov | Riyaziyyat Portfoliosu</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f7f4ef;          /* Minimalist Estetik Bej Fon */
-            --card-bg: #ffffff;           /* Təmiz Ağ Kart Fonu */
-            --text-main: #23211e;         /* Tünd Bej/Şokolad Mətn */
-            --text-muted: #6e675f;       /* Yumşaq Bozumtul-Bej Mətn */
-            --border-color: #e6dfd3;     /* İncə Çərçivə Rəngi */
-            --accent-color: #1a1917;     /* Vurğu Rəngi */
-            --hover-bg: #eae3d5;         /* Interaktiv Elementlər Üçün Hover */
-            --badge-bg: #efe8dc;        /* Teq və Badge Fonu */
-            --font-main: 'Plus Jakarta Sans', -apple-system, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anur Qoradalov — Digital Garden</title>
+<meta name="description" content="A living index of notes, proofs, problem logs, Manim/MATLAB/C++/Python visualizations, and lectures by Anur Qoradalov.">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-        body {
-            font-family: var(--font-main);
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-        }
+<style>
+  :root{
+    --bg: #f7f4ef;
+    --card: #fcfbf9;
+    --card-solid: #ffffff;
+    --card-hover: #ffffff;
+    --border: #e6e2da;
+    --border-strong: #dedace;
+    --ink: #2b2927;
+    --ink-soft: #706c66;
+    --ink-faint: #9c968c;
+    --accent: #8a6a45;
+    --accent-ink: #6b5236;
+    --pill: #f2eee7;
+    --pill-hover: #e8e3d8;
+    --green-ink: #3f6b4c; --green-bg: #e9f2ec; --green-line: #cfe3d6;
+    --red-ink: #8a3f34; --red-bg: #f7ece9; --red-line: #e8cec6;
+    --r-lg: 16px; --r-md: 12px; --r-sm: 8px;
+    --shadow: 0 1px 2px rgba(43,41,39,0.04), 0 6px 20px -10px rgba(43,41,39,0.10);
+    --shadow-hover: 0 2px 6px rgba(43,41,39,0.06), 0 14px 32px -14px rgba(43,41,39,0.16);
+    --maxw: 980px;
+  }
 
-        .container {
-            max-width: 900px;
-            width: 100%;
-        }
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
 
-        /* HERO HEADER */
-        .header {
-            margin-bottom: 32px;
-        }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
 
-        .header h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            letter-spacing: -0.03em;
-            margin-bottom: 6px;
-            color: var(--text-main);
-        }
+  ::selection{ background: var(--pill-hover); color: var(--ink); }
+  a{ color: inherit; text-decoration: none; }
+  img{ max-width: 100%; display: block; }
+  .wrap{ max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
 
-        .header .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
 
-        /* SOCIAL PILL BUTTONS */
-        .social-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 24px;
-        }
+  .mono{ font-family: 'JetBrains Mono', monospace; }
 
-        .pill-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 99px;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.88rem;
-            font-weight: 600;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            cursor: pointer;
-        }
+  /* ---------- Hero ---------- */
+  .hero{ padding: 96px 0 56px; }
+  .hero-kicker{ font-size: 0.95rem; color: var(--ink-faint); margin: 0 0 18px; }
+  h1.name{
+    font-size: clamp(2.4rem, 5.6vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 14px;
+  }
+  .role{ font-size: clamp(1.02rem, 1.8vw, 1.18rem); font-weight: 600; color: var(--accent-ink); margin: 0 0 26px; }
+  .bio{ font-size: 1.03rem; color: var(--ink-soft); max-width: 62ch; margin: 0 0 14px; }
+  .bio:last-of-type{ margin-bottom: 30px; }
+  .bio strong{ color: var(--ink); font-weight: 700; }
 
-        .pill-btn:hover {
-            background-color: var(--hover-bg);
-            border-color: #d8cebc;
-            transform: translateY(-1px);
-        }
+  /* ---------- Disclaimer ---------- */
+  .disclaimer{
+    display: flex; gap: 14px; align-items: flex-start;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 18px 20px;
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+    max-width: 62ch;
+  }
+  .disclaimer svg{ width: 18px; height: 18px; color: var(--accent); flex-shrink: 0; margin-top: 3px; }
+  .disclaimer strong{ color: var(--ink); font-weight: 700; }
 
-        /* LIVING NOTES BANNER */
-        .notice-banner {
-            background-color: rgba(239, 232, 220, 0.6);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 18px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 36px;
-            line-height: 1.5;
-        }
+  /* ---------- Social pills (hero only) ---------- */
+  .socials{ display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px 11px 16px;
+    background: var(--pill);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 0.92rem; font-weight: 600; color: var(--ink);
+    transition: background 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+  }
+  .pill svg{ width: 17px; height: 17px; flex-shrink: 0; color: var(--ink-soft); transition: color 0.16s ease; }
+  .pill:hover{ background: var(--pill-hover); border-color: var(--border-strong); transform: translateY(-1px); }
+  .pill.primary{ background: var(--ink); border-color: var(--ink); color: #fbfaf7; }
+  .pill.primary svg{ color: #fbfaf7; }
+  .pill.primary:hover{ background: var(--accent-ink); border-color: var(--accent-ink); }
 
-        .notice-banner strong {
-            color: var(--text-main);
-        }
+  /* ---------- Sticky chapter navigation ---------- */
+  .tabnav-outer{
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(247,244,239,0.92);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .tabnav{ display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 0; }
+  .tab-btn{
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 8px 16px 8px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
+  }
+  .tab-btn:hover{ background: var(--pill); color: var(--ink); }
+  .tab-btn.is-active{ background: var(--ink); border-color: var(--ink); color: #fbfaf7; }
 
-        /* CHAPTER TAB NAVIGATION (SPA) */
-        .chapter-nav {
-            display: flex;
-            gap: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
-            margin-bottom: 28px;
-            overflow-x: auto;
-            white-space: nowrap;
-        }
+  /* Math-glyph / icon badge used in place of an emoji per tab */
+  .tab-symbol{
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 21px; height: 21px;
+    border-radius: 7px;
+    background: var(--pill-hover);
+    color: var(--accent-ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    font-weight: 500;
+    flex-shrink: 0;
+    transition: background 0.16s ease, color 0.16s ease;
+  }
+  .tab-symbol svg{ width: 12px; height: 12px; }
+  .tab-btn.is-active .tab-symbol{ background: rgba(251,250,247,0.18); color: #fbfaf7; }
 
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 8px 16px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
+  /* ---------- Panels (Variant A: pure show/hide SPA) ---------- */
+  .tab-panel{ display: none; padding: 52px 0 72px; }
+  .tab-panel.is-active{ display: block; }
 
-        .tab-btn:hover {
-            color: var(--text-main);
-            background-color: var(--badge-bg);
-        }
+  .panel-head{ margin-bottom: 30px; }
+  .panel-head h2{ font-size: clamp(1.5rem, 3vw, 1.8rem); font-weight: 800; letter-spacing: -0.015em; margin: 0 0 8px; }
+  .panel-head p{ margin: 0; color: var(--ink-faint); font-size: 0.98rem; max-width: 56ch; }
 
-        .tab-btn.active {
-            color: var(--card-bg);
-            background-color: var(--accent-color);
-        }
+  /* ---------- About panel ---------- */
+  .about-text{ max-width: 64ch; }
+  .about-text p{ color: var(--ink-soft); font-size: 1.02rem; margin: 0 0 16px; }
+  .about-text strong{ color: var(--ink); font-weight: 700; }
 
-        /* FILTER TAG BAR */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
+  .focus-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 34px; }
+  .focus-card{
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
+    padding: 18px 20px;
+  }
+  .focus-card h3{ font-size: 1rem; font-weight: 700; margin: 0 0 6px; }
+  .focus-card p{ font-size: 0.88rem; color: var(--ink-soft); margin: 0; }
 
-        .tag-btn {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+  /* ---------- Filter bar (per-panel, scoped) ---------- */
+  .filter-bar{ display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+  .filter-btn{
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.84rem; font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease;
+  }
+  .filter-btn:hover{ border-color: var(--accent); color: var(--ink); }
+  .filter-btn.is-active{ background: var(--ink); border-color: var(--ink); color: #fbfaf7; }
 
-        .tag-btn:hover, .tag-btn.active {
-            border-color: var(--accent-color);
-            color: var(--text-main);
-            background-color: var(--badge-bg);
-        }
+  .empty-state{ text-align: center; color: var(--ink-faint); font-size: 0.94rem; padding: 36px 0; }
 
-        /* CONTENT SECTIONS */
-        .tab-content {
-            display: none;
-        }
+  /* ---------- Entry grid & cards ---------- */
+  .entries-grid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 18px; align-items: start; }
 
-        .tab-content.active {
-            display: block;
-        }
+  .entry-card{
+    background: var(--card-solid);
+    border: 1px solid var(--border);
+    border-radius: var(--r-lg);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: box-shadow 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+  }
+  .entry-card:hover{ box-shadow: var(--shadow-hover); border-color: var(--border-strong); transform: translateY(-2px); }
+  .entry-card.is-hidden{ display: none; }
 
-        /* GRID SYSTEM (FOR CARDS) */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+  .entry-media{ position: relative; aspect-ratio: 16 / 10; border-bottom: 1px solid var(--border); overflow: hidden; }
+  .entry-media .coord{ position: absolute; inset: 0; background-size: 22px 22px; opacity: 0.4; }
+  .entry-media.media-video{ background: linear-gradient(160deg, #33302b 0%, #201e1a 100%); display: flex; align-items: center; justify-content: center; }
+  .entry-media.media-video .coord{ background-image: linear-gradient(rgba(252,251,249,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(252,251,249,0.06) 1px, transparent 1px); }
+  .entry-media.media-diagram{ background: linear-gradient(135deg, var(--pill) 0%, #efe9db 100%); display: flex; align-items: center; justify-content: center; }
+  .entry-media.media-diagram .coord{ background-image: linear-gradient(var(--border-strong) 1px, transparent 1px), linear-gradient(90deg, var(--border-strong) 1px, transparent 1px); }
+  .entry-media .diagram-icon{ position: relative; width: 50%; height: 50%; color: var(--accent); opacity: 0.85; }
 
-        /* RECTANGULAR CARD COMPONENT */
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            /* OPTIMIZATION FOR HUNDREDS OF ITEMS */
-            content-visibility: auto;
-            contain-intrinsic-size: 200px;
-        }
+  .entry-play{
+    position: relative; width: 50px; height: 50px; border-radius: 50%;
+    background: #fbfaf7; display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.3);
+    transition: transform 0.18s ease;
+  }
+  .entry-play svg{ width: 18px; height: 18px; color: var(--ink); margin-left: 2px; }
+  .entry-media a:hover .entry-play{ transform: scale(1.08); }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-        }
+  .entry-body{ padding: 22px 22px 24px; display: flex; flex-direction: column; flex: 1; }
+  .entry-kicker{ font-size: 0.8rem; color: var(--ink-faint); margin: 0 0 8px; }
+  .entry-title{ font-size: 1.06rem; font-weight: 700; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .entry-desc{ font-size: 0.92rem; color: var(--ink-soft); margin: 0; }
 
-        .card-header {
-            margin-bottom: 12px;
-        }
+  .tag-row{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .tag{ font-size: 0.78rem; font-weight: 600; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--border-strong); color: var(--ink-soft); background: var(--bg); }
+  .tag.real-analysis{ color: #6b4f8a; border-color: #d8cbe8; background: #f5f0fa; }
+  .tag.complex-analysis{ color: #2f6f6b; border-color: #c9e3e0; background: #eef7f6; }
+  .tag.topology{ color: #8a5a2f; border-color: #e8d3b8; background: #faf1e4; }
+  .tag.algebra{ color: #3f5e8a; border-color: #c8d6ea; background: #eef2fa; }
+  .tag.geometry{ color: #8a662f; border-color: #ecdcc0; background: #faf3e6; }
+  .tag.ode{ color: #4f5f8a; border-color: #cdd6ea; background: #eff2fa; }
+  .tag.pde{ color: #5f4f8a; border-color: #d9cdea; background: #f3effa; }
+  .tag.logic{ color: #5a5a5a; border-color: #dcdcdc; background: #f2f2f0; }
+  .tag.measure{ color: #2f7a7d; border-color: #c3e2e3; background: #eaf6f6; }
+  .tag.numerical-analysis{ color: #6a6b2f; border-color: #e0e1c0; background: #f7f7e6; }
+  .tag.probability{ color: #8a2f5f; border-color: #ecc9de; background: #faeef4; }
+  .tag.statistics{ color: #b06a2c; border-color: #f0d9bd; background: #fbf0e2; }
+  .tag.transcripts{ color: var(--accent-ink); border-color: var(--border-strong); background: var(--pill); }
+  .tag.meta{ color: var(--accent); border-color: #e3d7c4; background: #f4ecdf; }
+  .tag.diff-easy{ color: var(--green-ink); border-color: var(--green-line); background: var(--green-bg); }
+  .tag.diff-hard{ color: var(--red-ink); border-color: var(--red-line); background: var(--red-bg); }
+  .tag.manim{ color: #1f6d5a; border-color: #c1e2d6; background: #e8f6f1; }
+  .tag.matlab{ color: #a8531d; border-color: #f0cba9; background: #fcefe2; }
+  .tag.cpp{ color: #3a4f8a; border-color: #c9d3ea; background: #edf1fa; }
+  .tag.python{ color: #7a6a1f; border-color: #e6dfb5; background: #f9f5e2; }
 
-        .card-tags {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
+  /* ---------- Solution accordion ---------- */
+  .solution-toggle{ margin: 16px 0 0; border-top: 1px dashed var(--border); padding-top: 12px; }
+  .solution-toggle summary{
+    cursor: pointer; list-style: none;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.85rem; font-weight: 600; color: var(--accent-ink);
+  }
+  .solution-toggle summary::-webkit-details-marker{ display: none; }
+  .solution-toggle summary::before{
+    content: ''; width: 7px; height: 7px;
+    border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor;
+    transform: rotate(-45deg); transition: transform 0.18s ease; flex-shrink: 0;
+  }
+  .solution-toggle[open] summary::before{ transform: rotate(45deg); }
+  .solution-content{ margin-top: 10px; font-size: 0.88rem; color: var(--ink-soft); line-height: 1.65; }
 
-        .badge {
-            background-color: var(--badge-bg);
-            color: var(--text-main);
-            font-size: 0.73rem;
-            font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
+  /* ---------- Action pill buttons (up to 4 per card) ---------- */
+  .entry-actions{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .action-btn{
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border-strong);
+    background: var(--bg);
+    font-size: 0.8rem; font-weight: 600; color: var(--ink-soft);
+    transition: border-color 0.16s ease, color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+  }
+  .action-btn:hover{ border-color: var(--accent); color: var(--accent-ink); background: var(--pill); transform: translateY(-1px); }
+  .action-btn.primary{ background: var(--ink); border-color: var(--ink); color: #fbfaf7; }
+  .action-btn.primary:hover{ background: var(--accent-ink); border-color: var(--accent-ink); color: #fbfaf7; }
 
-        .badge-year {
-            background-color: var(--accent-color);
-            color: var(--card-bg);
-        }
+  /* ---------- Footer ---------- */
+  footer{ padding: 44px 0 56px; border-top: 1px solid var(--border); text-align: center; }
+  footer p{ margin: 0; font-size: 0.85rem; color: var(--ink-faint); }
+  footer .fmark{ color: var(--accent); }
 
-        .card h3 {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 6px;
-            line-height: 1.3;
-        }
-
-        .card p {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
-        .card-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: auto;
-        }
-
-        .card-actions .pill-btn {
-            font-size: 0.78rem;
-            padding: 5px 12px;
-        }
-
-        /* YOUTUBE HORIZONTAL CAROUSEL */
-        .carousel-container {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            padding-bottom: 16px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-color) transparent;
-        }
-
-        .carousel-item {
-            flex: 0 0 300px;
-            scroll-snap-align: start;
-        }
-
-        .media-frame {
-            width: 100%;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            margin-bottom: 12px;
-            background-color: var(--badge-bg);
-            aspect-ratio: 16 / 9;
-        }
-
-        .media-frame img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        footer {
-            text-align: center;
-            font-size: 0.82rem;
-            color: var(--text-muted);
-            margin-top: 60px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-    </style>
+  /* ---------- Responsive ---------- */
+  @media (max-width: 560px){
+    .wrap{ padding: 0 20px; }
+    .hero{ padding: 64px 0 44px; }
+    .entries-grid{ grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ transition: none !important; scroll-behavior: auto !important; } }
+</style>
 </head>
 <body>
 
-<div class="container">
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <symbol id="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="icon-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+      </symbol>
+      <symbol id="icon-play-big" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+      <!-- Simple anonymous-person glyph: round head + shoulders, used for the About tab -->
+      <symbol id="icon-person" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8v1H4v-1Z"/>
+      </symbol>
+      <!-- Code-brackets glyph, used for the Code & Visualizations tab -->
+      <symbol id="icon-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 8 4 12.5 9 17"/>
+        <polyline points="15 8 20 12.5 15 17"/>
+      </symbol>
+    </defs>
+  </svg>
 
-    <!-- HERO HEADER -->
-    <header class="header">
-        <h1>Anur Qoradalov</h1>
-        <div class="subtitle">Riyaziyyat Tələbəsi | Akademik Portfolioda Digital Garden</div>
+  <!-- ===================== HERO (social links live here ONLY) ===================== -->
+  <header class="hero">
+    <div class="wrap">
+      <p class="hero-kicker">Mathematics — a digital garden</p>
+      <h1 class="name">Anur Qoradalov</h1>
+      <p class="role">Mathematics Student</p>
+      <p class="bio">
+        I started in <strong>physics</strong>, chasing the differential equations that govern
+        oscillators and fields, until the proofs sitting underneath the physics became more
+        interesting than the physics itself.
+      </p>
+      <p class="bio">
+        Today my work sits mostly in <strong>real and complex analysis</strong>, <strong>topology</strong>,
+        and <strong>differential equations</strong>, with <strong>probability</strong> opening up as a
+        newer thread. This page is where I keep the notes, proofs, and visualizations that come out
+        of that work.
+      </p>
 
-        <div class="social-links">
-            <a href="YOUTUBE_LINKINIZ" class="pill-btn">🔴 YouTube</a>
-            <a href="INSTAGRAM_LINKINIZ" class="pill-btn">📸 Instagram</a>
-            <a href="https://github.com/goradalovanur-bit" class="pill-btn">💻 GitHub</a>
-            <a href="mailto:email@example.com" class="pill-btn">✉️ Gmail</a>
-        </div>
+      <div class="disclaimer">
+        <svg aria-hidden="true"><use href="#icon-info"/></svg>
+        <p style="margin:0;">
+          <strong>Living learning log.</strong> Notes, proofs, and video transcripts represent my
+          active study process and may contain minor typos. Feedback and corrections are welcome.
+        </p>
+      </div>
 
-        <div class="notice-banner">
-            <strong>📖 Canlı Öyrənmə Qeydləri:</strong> Bu platformada paylaşılan mühazirə konspektləri, YouTube video transkriptləri və məsələ həlləri aktiv təhsil prosesimin bir hissəsidir. Kiçik texniki və ya çap səhvləri ola bilər. Səhv və ya alternativ həll təklifiniz varsa, əlaqə saxlamaqdan çəkinməyin!
-        </div>
-    </header>
+      <div class="socials">
+        <a class="pill primary" href="mailto:goradalovanur@gmail.com" aria-label="Send an email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 6 12 13 2 6"/><path d="M2 6h20v12H2z"/></svg>
+          Email
+        </a>
+        <a class="pill" href="https://www.youtube.com/@Anur_Goradalov" target="_blank" rel="noopener noreferrer" aria-label="YouTube channel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+          YouTube
+        </a>
+        <a class="pill" href="https://www.instagram.com/goradalov" target="_blank" rel="noopener noreferrer" aria-label="Instagram profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37a4 4 0 1 1-7.914 1.173A4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          Instagram
+        </a>
+        <a class="pill" href="https://github.com/goradalovanur-bit" target="_blank" rel="noopener noreferrer" aria-label="GitHub profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </header>
 
-    <!-- CHAPTER NAVIGATION BAR (SPA SWITCHING) -->
-    <nav class="chapter-nav">
-        <button class="tab-btn active" onclick="switchTab('about')">👨‍🔬 Haqqımda</button>
-        <button class="tab-btn" onclick="switchTab('notes')">📚 Konspektlər və Dərsliklər</button>
-        <button class="tab-btn" onclick="switchTab('problems')">🧠 Məsələ Həlləri</button>
-        <button class="tab-btn" onclick="switchTab('code')">💻 Manim & MATLAB</button>
-        <button class="tab-btn" onclick="switchTab('youtube')">🎬 YouTube</button>
-    </nav>
+  <!-- ===================== CHAPTER NAVIGATION (Variant A: tab switching SPA) ===================== -->
+  <!-- Tab markers: anonymous-person glyph for About, Σ for Notes, code-brackets for Code, ∎ / ▶ elsewhere. -->
+  <nav class="tabnav-outer" aria-label="Site chapters">
+    <div class="wrap">
+      <div class="tabnav" role="tablist">
+        <button class="tab-btn is-active" data-target="about" role="tab" aria-selected="true"><span class="tab-symbol" aria-hidden="true"><svg><use href="#icon-person"/></svg></span>About</button>
+        <button class="tab-btn" data-target="notes" role="tab" aria-selected="false"><span class="tab-symbol" aria-hidden="true">Σ</span>Course Notes &amp; Transcripts</button>
+        <button class="tab-btn" data-target="problems" role="tab" aria-selected="false"><span class="tab-symbol" aria-hidden="true">∎</span>Solved Problems</button>
+        <button class="tab-btn" data-target="code" role="tab" aria-selected="false"><span class="tab-symbol" aria-hidden="true"><svg><use href="#icon-code"/></svg></span>Code &amp; Visualizations</button>
+        <button class="tab-btn" data-target="youtube" role="tab" aria-selected="false"><span class="tab-symbol" aria-hidden="true">▶</span>YouTube</button>
+      </div>
+    </div>
+  </nav>
 
-    <!-- TAB 1: ABOUT -->
-    <section id="about" class="tab-content active">
-        <div class="card" style="margin-bottom: 20px;">
-            <div class="card-header">
-                <h3>Akademik Profil</h3>
-            </div>
-            <p>Mən riyaziyyat üzrə təhsil alan tələbəyəm. Əvvəlki fizika arxa planım mene dəqiq analitik təfəkkürlə yanaşı riyazi anlayışlara intuitiv baxış bucağı qazandırıb. Əsas akademik maraq sahələrim Real Analiz, Kompleks Analiz, Topologiya, Diferensial Tənliklər və Ehtimal Nəzəriyyəsidir.</p>
-            <p>Bu platformada LaTeX mühazirə konspektlərimi, YouTube dərs transkriptlərimi, orijinal məsələ həllərimi və Manim/MATLAB simulyasiyalarımı toplayıram.</p>
-        </div>
+  <main class="wrap">
+
+    <!-- ===================== ABOUT ===================== -->
+    <section id="panel-about" class="tab-panel is-active" data-panel="about" role="tabpanel">
+      <div class="panel-head">
+        <h2>About</h2>
+        <p>The short version of how I got here, and what I'm currently spending most of my attention on.</p>
+      </div>
+      <div class="about-text">
+        <p>
+          I came to mathematics sideways, through physics — the differential equations behind
+          oscillating systems and fields were the first proofs I actually cared about. Working
+          backward from those equations to their underlying theory is what pulled me fully
+          into pure math.
+        </p>
+        <p>
+          Outside of coursework I spend a lot of time translating proofs into pictures: LaTeX
+          and TikZ for static figures, Manim for animated constructions, and MATLAB, C++, and
+          Python when a problem is easier to understand numerically or computationally first.
+          This site is the running record of all of it — notes, daily problems, visualizations,
+          and recorded explanations.
+        </p>
+      </div>
+
+      <div class="focus-grid">
+        <div class="focus-card"><h3>Real Analysis</h3><p>Sequences, compactness, measure, and the foundations everything else builds on.</p></div>
+        <div class="focus-card"><h3>Complex Analysis</h3><p>Holomorphic functions, contour integration, and conformal mappings.</p></div>
+        <div class="focus-card"><h3>Topology</h3><p>Metric and general topological spaces, connectedness, and continuity.</p></div>
+        <div class="focus-card"><h3>Algebra</h3><p>Groups, rings, and fields — the abstract structures underneath everything else.</p></div>
+        <div class="focus-card"><h3>Geometry</h3><p>Classical and modern geometric reasoning, from Euclid to manifolds.</p></div>
+        <div class="focus-card"><h3>Ordinary Differential Equations</h3><p>Where I started — now revisited with a more rigorous eye.</p></div>
+        <div class="focus-card"><h3>Partial Differential Equations</h3><p>Multivariable dynamics, boundary conditions, and the equations behind fields.</p></div>
+        <div class="focus-card"><h3>Mathematical Logic</h3><p>Formal systems, proof theory, and the foundations of what "proof" means.</p></div>
+        <div class="focus-card"><h3>Lebesgue Integral &amp; Measure</h3><p>Measure spaces and integration theory underneath modern analysis.</p></div>
+        <div class="focus-card"><h3>Numerical Analysis</h3><p>Approximation, stability, and computing what can't be solved in closed form.</p></div>
+        <div class="focus-card"><h3>Probability</h3><p>The newest thread, building up from measure-theoretic foundations.</p></div>
+        <div class="focus-card"><h3>Mathematical Statistics</h3><p>Estimation, inference, and the rigorous side of working with data.</p></div>
+      </div>
     </section>
 
-    <!-- TAB 2: COURSE NOTES & TRANSCRIPTS -->
-    <section id="notes" class="tab-content">
-        <div class="filter-bar">
-            <button class="tag-btn active" onclick="filterCategory('notes', 'all')">Bütün</button>
-            <button class="tag-btn" onclick="filterCategory('notes', 'real-analysis')">Real Analiz</button>
-            <button class="tag-btn" onclick="filterCategory('notes', 'topology')">Topologiya</button>
-            <button class="tag-btn" onclick="filterCategory('notes', 'transcript')">YouTube Transkript</button>
-        </div>
+    <!-- ===================== COURSE NOTES & TRANSCRIPTS ===================== -->
+    <section id="panel-notes" class="tab-panel" data-panel="notes" role="tabpanel">
+      <div class="panel-head">
+        <h2>Course Notes &amp; Transcripts</h2>
+        <p>University lecture notes, exam prep, and YouTube lecture transcripts, formatted like textbook chapters.</p>
+      </div>
 
-        <div class="card-grid">
-            <!-- TEMPLATE CARD 1: LECTURE NOTE -->
-            <div class="card" data-category="real-analysis">
-                <div>
-                    <div class="card-tags">
-                        <span class="badge">Real Analiz</span>
-                        <span class="badge">LaTeX / PDF</span>
-                    </div>
-                    <h3>Riman-Stiltjes İnteqralı və Ölçü Nəzəriyyəsi</h3>
-                    <p>Universitet mühazirələri əsasında hazırlanmış teorem isbatları və mühazirə konspekti.</p>
-                </div>
-                <div class="card-actions">
-                    <a href="notes/real_analysis.pdf" class="pill-btn">📄 PDF Oxu</a>
-                    <a href="notes/real_analysis.tex" class="pill-btn">✏️ .tex Kod</a>
-                </div>
-            </div>
+      <div class="filter-bar" role="group" aria-label="Filter notes by subject">
+        <button class="filter-btn is-active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="real-analysis">Real Analysis</button>
+        <button class="filter-btn" data-filter="complex-analysis">Complex Analysis</button>
+        <button class="filter-btn" data-filter="topology">Topology</button>
+        <button class="filter-btn" data-filter="algebra">Algebra</button>
+        <button class="filter-btn" data-filter="geometry">Geometry</button>
+        <button class="filter-btn" data-filter="ode">Ordinary Diff. Equations</button>
+        <button class="filter-btn" data-filter="pde">Partial Diff. Equations</button>
+        <button class="filter-btn" data-filter="logic">Mathematical Logic</button>
+        <button class="filter-btn" data-filter="measure">Lebesgue Integral &amp; Measure</button>
+        <button class="filter-btn" data-filter="numerical-analysis">Numerical Analysis</button>
+        <button class="filter-btn" data-filter="probability">Probability</button>
+        <button class="filter-btn" data-filter="statistics">Mathematical Statistics</button>
+        <button class="filter-btn" data-filter="transcripts">Transcripts / Textbooks</button>
+      </div>
 
-            <!-- TEMPLATE CARD 2: YOUTUBE TRANSCRIPT -->
-            <div class="card" data-category="transcript">
-                <div>
-                    <div class="card-tags">
-                        <span class="badge">YouTube Transkript</span>
-                        <span class="badge">Dərslik</span>
-                    </div>
-                    <h3>Cavalieri Prinsipi və 3D Həndəsə Transkripti</h3>
-                    <p>YouTube ders videomun mətni, dərslik formatında hazırlanmış LaTeX konspekti və diagramlar.</p>
-                </div>
-                <div class="card-actions">
-                    <a href="notes/cavalieri_transcript.pdf" class="pill-btn">📄 PDF Oxu</a>
-                    <a href="YOUTUBE_LINKINIZ" class="pill-btn">🎬 Videoya Bax</a>
-                </div>
+      <div class="entries-grid">
+
+        <article class="entry-card" data-tags="complex-analysis">
+          <div class="entry-body">
+            <p class="entry-kicker mono">/notes · fall term · exam prep</p>
+            <h3 class="entry-title">Exam Notes — Complex Analysis</h3>
+            <p class="entry-desc">Consolidated revision notes covering Cauchy's integral formula, Liouville's theorem, and residue calculus, built for the final exam.</p>
+            <div class="tag-row"><span class="tag complex-analysis">Complex Analysis</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="notes/complex-analysis-exam-notes.pdf" download>📄 Read PDF</a>
+              <a class="action-btn" href="notes/source/complex-analysis-exam-notes.tex" download>✏️ .tex Code</a>
             </div>
-            <!-- YENİ KONSPEKT VƏ YA TRANSKRİPT KARTINI BURA ƏLAVƏ EDİN -->
-        </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="probability transcripts">
+          <div class="entry-body">
+            <p class="entry-kicker mono">/transcripts · chapter 3</p>
+            <h3 class="entry-title">Lecture Transcript — Foundations of Measure-Theoretic Probability</h3>
+            <p class="entry-desc">A YouTube lecture rewritten and structured as a textbook chapter, with numbered definitions, theorems, and worked examples added for reading offline.</p>
+            <div class="tag-row"><span class="tag probability">Probability</span><span class="tag measure">Lebesgue Integral &amp; Measure</span><span class="tag transcripts">Transcripts / Textbooks</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="notes/measure-theoretic-probability-transcript.pdf" download>📄 Read PDF</a>
+              <a class="action-btn" href="https://youtube.com/@Anur_Goradalov" target="_blank" rel="noopener noreferrer">🎬 Watch Video</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ADD NEW CARD HERE — copy an <article class="entry-card"> block above, set data-tags to match the filter buttons, and edit the text and action links -->
+
+      </div>
+      <p class="empty-state" hidden>No entries in this category yet — check back soon.</p>
     </section>
 
-    <!-- TAB 3: SOLVED PROBLEMS -->
-    <section id="problems" class="tab-content">
-        <div class="filter-bar">
-            <button class="tag-btn active" onclick="filterCategory('problems', 'all')">Bütün</button>
-            <button class="tag-btn" onclick="filterCategory('problems', 'reshu')">Reshu.ru</button>
-            <button class="tag-btn" onclick="filterCategory('problems', 'analysis')">Analiz</button>
-            <button class="tag-btn" onclick="filterCategory('problems', 'probability')">Ehtimal</button>
-        </div>
+    <!-- ===================== SOLVED PROBLEMS ===================== -->
+    <section id="panel-problems" class="tab-panel" data-panel="problems" role="tabpanel">
+      <div class="panel-head">
+        <h2>Solved Problems</h2>
+        <p>A daily problem log of easy and hard exercises, plus proofs written up for outside review.</p>
+      </div>
 
-        <div class="card-grid">
-            <!-- TEMPLATE CARD 1: RESHU.RU ALTERNATIVE PROOF -->
-            <div class="card" data-category="reshu">
-                <div>
-                    <div class="card-tags">
-                        <span class="badge">Reshu.ru</span>
-                        <span class="badge">Orijinal İsbat</span>
-                    </div>
-                    <h3>Qeyri-Xətti İnteqral Məsələsinə Alternativ Həll</h3>
-                    <p>Reshu.ru platformasında təsdiqlənmiş və paylaşılan orijinal alternativ isbatım.</p>
-                </div>
-                <div class="card-actions">
-                    <a href="problems/reshu_proof.pdf" class="pill-btn">📄 PDF Həll</a>
-                    <a href="problems/reshu_proof.tex" class="pill-btn">✏️ .tex Kod</a>
-                </div>
+      <div class="filter-bar" role="group" aria-label="Filter problems by subject">
+        <button class="filter-btn is-active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="real-analysis">Real Analysis</button>
+        <button class="filter-btn" data-filter="complex-analysis">Complex Analysis</button>
+        <button class="filter-btn" data-filter="topology">Topology</button>
+        <button class="filter-btn" data-filter="algebra">Algebra</button>
+        <button class="filter-btn" data-filter="geometry">Geometry</button>
+        <button class="filter-btn" data-filter="ode">Ordinary Diff. Equations</button>
+        <button class="filter-btn" data-filter="pde">Partial Diff. Equations</button>
+        <button class="filter-btn" data-filter="logic">Mathematical Logic</button>
+        <button class="filter-btn" data-filter="measure">Lebesgue Integral &amp; Measure</button>
+        <button class="filter-btn" data-filter="numerical-analysis">Numerical Analysis</button>
+        <button class="filter-btn" data-filter="probability">Probability</button>
+        <button class="filter-btn" data-filter="statistics">Mathematical Statistics</button>
+        <button class="filter-btn" data-filter="transcripts">Transcripts / Textbooks</button>
+      </div>
+
+      <div class="entries-grid">
+
+        <article class="entry-card" data-tags="real-analysis">
+          <div class="entry-body">
+            <p class="entry-kicker mono">/problems · published</p>
+            <h3 class="entry-title">An Alternative Proof of the Bolzano–Weierstrass Theorem</h3>
+            <p class="entry-desc">A shorter nested-intervals argument avoiding subsequence extraction, published as a community-reviewed alternative proof.</p>
+            <div class="tag-row"><span class="tag real-analysis">Real Analysis</span><span class="tag meta">Published</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="https://reshu.ru" target="_blank" rel="noopener noreferrer">🔗 View on Reshu.ru</a>
+              <a class="action-btn" href="problems/bolzano-weierstrass-alt-proof.pdf" download>📄 Read PDF</a>
             </div>
-            <!-- YENİ MƏSƏLƏ HƏLLİNİ BURA ƏLAVƏ EDİN -->
-        </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="topology measure">
+          <div class="entry-body">
+            <p class="entry-kicker mono">/problems · day 118</p>
+            <h3 class="entry-title">A Non-Measurable Set via the Axiom of Choice</h3>
+            <p class="entry-desc">Construct a Vitali set on the unit interval and show it cannot be Lebesgue measurable without violating countable additivity.</p>
+            <details class="solution-toggle">
+              <summary>View solution outline</summary>
+              <div class="solution-content">Partition ℝ into cosets of ℚ, pick one representative per coset via choice, then show translation-invariance and countable additivity force a contradiction whether the resulting set has measure zero or positive measure.</div>
+            </details>
+            <div class="tag-row"><span class="tag topology">Topology</span><span class="tag measure">Lebesgue Integral &amp; Measure</span><span class="tag diff-hard">Hard</span></div>
+            <div class="entry-actions">
+              <a class="action-btn" href="problems/source/vitali-set.tex" download>✏️ .tex Code</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ADD NEW CARD HERE — copy an <article class="entry-card"> block above, set data-tags and an optional diff-easy/diff-hard tag, and edit the solution outline -->
+
+      </div>
+      <p class="empty-state" hidden>No entries in this category yet — check back soon.</p>
     </section>
 
-    <!-- TAB 4: MANIM & MATLAB -->
-    <section id="code" class="tab-content">
-        <div class="card-grid">
-            <!-- TEMPLATE CARD: MANIM ANIMATION -->
-            <div class="card">
-                <div>
-                    <div class="card-tags">
-                        <span class="badge">Manim</span>
-                        <span class="badge">Python</span>
-                    </div>
-                    <h3>3D Fəzada Həcmlərin Mütənasibliyi Animasiyası</h3>
-                    <p>Python Manim kütübxanası ilə 3Blue1Brown üslubunda hazırlanmış vizual animasiya kodu.</p>
-                </div>
-                <div class="card-actions">
-                    <a href="code/cavalieri.py" class="pill-btn">💻 Python Kod (.py)</a>
-                    <a href="YOUTUBE_LINKINIZ" class="pill-btn">🎬 Videoya Bax</a>
-                </div>
+    <!-- ===================== CODE & VISUALIZATIONS (Manim · MATLAB · C++ · Python) ===================== -->
+    <section id="panel-code" class="tab-panel" data-panel="code" role="tabpanel">
+      <div class="panel-head">
+        <h2>Code &amp; Visualizations</h2>
+        <p>Everything that turns a proof into something runnable or watchable — Manim animations, MATLAB simulations, and C++/Python implementations, in one place.</p>
+      </div>
+
+      <div class="filter-bar" role="group" aria-label="Filter by tool">
+        <button class="filter-btn is-active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="manim">Manim</button>
+        <button class="filter-btn" data-filter="matlab">MATLAB</button>
+        <button class="filter-btn" data-filter="cpp">C++</button>
+        <button class="filter-btn" data-filter="python">Python</button>
+      </div>
+
+      <div class="filter-bar" role="group" aria-label="Filter by subject">
+        <button class="filter-btn is-active" data-filter="all">All subjects</button>
+        <button class="filter-btn" data-filter="real-analysis">Real Analysis</button>
+        <button class="filter-btn" data-filter="complex-analysis">Complex Analysis</button>
+        <button class="filter-btn" data-filter="topology">Topology</button>
+        <button class="filter-btn" data-filter="algebra">Algebra</button>
+        <button class="filter-btn" data-filter="geometry">Geometry</button>
+        <button class="filter-btn" data-filter="ode">Ordinary Diff. Equations</button>
+        <button class="filter-btn" data-filter="pde">Partial Diff. Equations</button>
+        <button class="filter-btn" data-filter="logic">Mathematical Logic</button>
+        <button class="filter-btn" data-filter="measure">Lebesgue Integral &amp; Measure</button>
+        <button class="filter-btn" data-filter="numerical-analysis">Numerical Analysis</button>
+        <button class="filter-btn" data-filter="probability">Probability</button>
+        <button class="filter-btn" data-filter="statistics">Mathematical Statistics</button>
+      </div>
+
+      <div class="entries-grid">
+
+        <article class="entry-card" data-tags="complex-analysis manim">
+          <div class="entry-media media-video">
+            <div class="coord"></div>
+            <a href="https://youtu.be/example-riemann-mapping" target="_blank" rel="noopener noreferrer" aria-label="Watch: Visualizing the Riemann Mapping Theorem">
+              <div class="entry-play"><svg><use href="#icon-play-big"/></svg></div>
+            </a>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/code · manim</p>
+            <h3 class="entry-title">Visualizing the Riemann Mapping Theorem</h3>
+            <p class="entry-desc">An animated construction showing a simply connected domain deformed conformally onto the open unit disk.</p>
+            <div class="tag-row"><span class="tag complex-analysis">Complex Analysis</span><span class="tag manim">Manim</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="https://youtu.be/example-riemann-mapping" target="_blank" rel="noopener noreferrer">🎬 Watch Video</a>
+              <a class="action-btn" href="code/riemann-mapping-manim.py" download>💻 Script (.py)</a>
             </div>
-            <!-- YENİ MANIM/MATLAB KODUNU BURA ƏLAVƏ EDİN -->
-        </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="ode matlab">
+          <div class="entry-media media-diagram">
+            <div class="coord"></div>
+            <svg class="diagram-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M20 55 C 20 30, 45 20, 62 30 C 80 41, 80 66, 62 74 C 44 82, 20 74, 20 55Z"/>
+              <path d="M20 55 L10 50 M20 55 L14 63" stroke-width="1.6"/>
+            </svg>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/code · matlab</p>
+            <h3 class="entry-title">Numerical Phase Portraits for the Lotka–Volterra System</h3>
+            <p class="entry-desc">A MATLAB script sweeping initial conditions to plot closed orbits of the predator–prey equations, with an accompanying write-up.</p>
+            <div class="tag-row"><span class="tag ode">Ordinary Diff. Equations</span><span class="tag matlab">MATLAB</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="code/lotka-volterra.m" download>💻 Script (.m)</a>
+              <a class="action-btn" href="notes/lotka-volterra-writeup.pdf" download>📄 Read PDF</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="numerical-analysis cpp">
+          <div class="entry-media media-diagram">
+            <div class="coord"></div>
+            <svg class="diagram-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polyline points="15,80 30,55 45,65 60,30 75,45 88,20" />
+              <circle cx="30" cy="55" r="2.4" fill="currentColor" stroke="none"/>
+              <circle cx="60" cy="30" r="2.4" fill="currentColor" stroke="none"/>
+              <circle cx="88" cy="20" r="2.4" fill="currentColor" stroke="none"/>
+            </svg>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/code · c++</p>
+            <h3 class="entry-title">A Fast Runge–Kutta Solver in C++</h3>
+            <p class="entry-desc">A templated RK4 integrator built for speed comparisons against MATLAB's ode45 on stiff and non-stiff systems.</p>
+            <div class="tag-row"><span class="tag numerical-analysis">Numerical Analysis</span><span class="tag cpp">C++</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="code/rk4-solver.cpp" download>💻 Source (.cpp)</a>
+              <a class="action-btn" href="notes/rk4-benchmarks.pdf" download>📄 Read PDF</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="statistics python">
+          <div class="entry-media media-diagram">
+            <div class="coord"></div>
+            <svg class="diagram-icon" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="15" y="55" width="12" height="25"/>
+              <rect x="32" y="35" width="12" height="45"/>
+              <rect x="49" y="45" width="12" height="35"/>
+              <rect x="66" y="20" width="12" height="60"/>
+            </svg>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/code · python</p>
+            <h3 class="entry-title">Bootstrapped Confidence Intervals from Scratch</h3>
+            <p class="entry-desc">A small Python/NumPy implementation of the nonparametric bootstrap, compared against the closed-form normal-approximation interval.</p>
+            <div class="tag-row"><span class="tag statistics">Mathematical Statistics</span><span class="tag python">Python</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="code/bootstrap-ci.py" download>💻 Script (.py)</a>
+              <a class="action-btn" href="notes/bootstrap-ci-writeup.pdf" download>📄 Read PDF</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ADD NEW CARD HERE — copy an <article class="entry-card"> block above, keep media-video for Manim/YouTube-hosted animations
+             or media-diagram for MATLAB/C++/Python figures, set data-tags to combine one subject tag with one tool tag
+             (manim / matlab / cpp / python), and edit the text and action links -->
+
+      </div>
+      <p class="empty-state" hidden>No entries in this category yet — check back soon.</p>
     </section>
 
-    <!-- TAB 5: YOUTUBE HORIZONTAL CAROUSEL -->
-    <section id="youtube" class="tab-content">
-        <div class="carousel-container">
-            <!-- CAROUSEL ITEM 1 -->
-            <div class="carousel-item">
-                <div class="card">
-                    <div class="media-frame">
-                        <img src="https://via.placeholder.com/300x170/efe8dc/6e675f?text=Video+Thumbnail" alt="YouTube Thumbnail">
-                    </div>
-                    <div class="card-tags">
-                        <span class="badge badge-year">2026</span>
-                        <span class="badge">Həndəsə</span>
-                    </div>
-                    <h3>Cavalieri Prinsipi Vizuallaşdırması</h3>
-                    <p>Həcmlərin mütənasibliyi və 3D animasiya izahı.</p>
-                    <div class="card-actions">
-                        <a href="YOUTUBE_LINKINIZ" class="pill-btn">🔴 Videonu İzlə</a>
-                    </div>
-                </div>
+    <!-- ===================== YOUTUBE ===================== -->
+    <section id="panel-youtube" class="tab-panel" data-panel="youtube" role="tabpanel">
+      <div class="panel-head">
+        <h2>YouTube</h2>
+        <p>Recorded explanations and animated deep dives, newest first.</p>
+      </div>
+
+      <div class="entries-grid">
+
+        <article class="entry-card">
+          <div class="entry-media media-video">
+            <div class="coord"></div>
+            <a href="https://youtu.be/soK-6fPr2so" target="_blank" rel="noopener noreferrer" aria-label="Watch: Hong Wang and the Kakeya Conjecture">
+              <div class="entry-play"><svg><use href="#icon-play-big"/></svg></div>
+            </a>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/youtube · guest talk</p>
+            <h3 class="entry-title">Hong Wang (Fields 2026): The Kakeya Problem &amp; the Besicovitch Construction</h3>
+            <p class="entry-desc">A walkthrough of the Kakeya needle problem and the Besicovitch construction behind it, prompted by this year's Fields Medal announcement.</p>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="https://youtu.be/soK-6fPr2so" target="_blank" rel="noopener noreferrer">🎬 Watch on YouTube</a>
             </div>
-            <!-- YENİ YOUTUBE VİDEOSUNU BURA ƏLAVƏ EDİN -->
-        </div>
+          </div>
+        </article>
+
+        <article class="entry-card" data-tags="complex-analysis">
+          <div class="entry-media media-video">
+            <div class="coord"></div>
+            <a href="https://youtu.be/example-cauchy-intuition" target="_blank" rel="noopener noreferrer" aria-label="Watch: An Intuition for the Cauchy Integral Formula">
+              <div class="entry-play"><svg><use href="#icon-play-big"/></svg></div>
+            </a>
+          </div>
+          <div class="entry-body">
+            <p class="entry-kicker mono">/youtube · explainer</p>
+            <h3 class="entry-title">An Intuition for the Cauchy Integral Formula</h3>
+            <p class="entry-desc">Why the value of a holomorphic function inside a contour is fully determined by its values on the boundary, built up from a physical intuition first.</p>
+            <div class="tag-row"><span class="tag complex-analysis">Complex Analysis</span></div>
+            <div class="entry-actions">
+              <a class="action-btn primary" href="https://youtu.be/example-cauchy-intuition" target="_blank" rel="noopener noreferrer">🎬 Watch on YouTube</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- ADD NEW CARD HERE — copy an <article class="entry-card"> block above (media-video), newest video first, and edit the link, title, and description -->
+
+      </div>
     </section>
 
-    <footer>
-        © 2026 Anur Qoradalov • GitHub Pages üzərində yerləşdirilmişdir.
-    </footer>
+  </main>
 
-</div>
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="wrap">
+      <p>© <span id="year">2026</span> Anur Qoradalov <span class="fmark">·</span> Built with ∫, ε, and Plus Jakarta Sans</p>
+    </div>
+  </footer>
 
-<!-- LIGHTWEIGHT ZERO-DEPENDENCY JS -->
-<script>
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        document.getElementById(tabId).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
+  <script>
+    (function(){
+      var yearEl = document.getElementById('year');
+      if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-    function filterCategory(sectionId, category) {
-        const section = document.getElementById(sectionId);
-        const cards = section.querySelectorAll('.card');
-        const buttons = section.querySelectorAll('.tag-btn');
+      /* ---------- Chapter tab switching (Variant A: show/hide) ---------- */
+      var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+      var panels = Array.prototype.slice.call(document.querySelectorAll('.tab-panel'));
 
-        buttons.forEach(btn => btn.classList.remove('active'));
-        event.currentTarget.classList.add('active');
-
-        cards.forEach(card => {
-            if (category === 'all' || card.getAttribute('data-category') === category) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
-            }
+      function activateTab(target){
+        tabButtons.forEach(function(btn){
+          var isMatch = btn.dataset.target === target;
+          btn.classList.toggle('is-active', isMatch);
+          btn.setAttribute('aria-selected', isMatch ? 'true' : 'false');
         });
-    }
-</script>
+        panels.forEach(function(panel){
+          panel.classList.toggle('is-active', panel.dataset.panel === target);
+        });
+      }
+
+      tabButtons.forEach(function(btn){
+        btn.addEventListener('click', function(){ activateTab(btn.dataset.target); });
+      });
+
+      /* ---------- Tag filtering, scoped per panel, with support for multiple filter bars ---------- */
+      panels.forEach(function(panel){
+        var filterBars = Array.prototype.slice.call(panel.querySelectorAll('.filter-bar'));
+        if (!filterBars.length) return;
+
+        var cards = Array.prototype.slice.call(panel.querySelectorAll('.entry-card'));
+        var emptyState = panel.querySelector('.empty-state');
+        var activeFilters = filterBars.map(function(){ return 'all'; });
+
+        function applyFilters(){
+          var visibleCount = 0;
+          cards.forEach(function(card){
+            var tags = (card.dataset.tags || '').split(' ');
+            var match = activeFilters.every(function(f){ return f === 'all' || tags.indexOf(f) !== -1; });
+            card.classList.toggle('is-hidden', !match);
+            if (match) visibleCount++;
+          });
+          if (emptyState) emptyState.hidden = visibleCount !== 0;
+        }
+
+        filterBars.forEach(function(bar, barIndex){
+          var filterBtns = Array.prototype.slice.call(bar.querySelectorAll('.filter-btn'));
+          filterBtns.forEach(function(btn){
+            btn.addEventListener('click', function(){
+              filterBtns.forEach(function(b){ b.classList.remove('is-active'); });
+              btn.classList.add('is-active');
+              activeFilters[barIndex] = btn.dataset.filter;
+              applyFilters();
+            });
+          });
+        });
+
+        applyFilters();
+      });
+    })();
+  </script>
 
 </body>
 </html>
