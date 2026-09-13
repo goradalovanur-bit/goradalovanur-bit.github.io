@@ -1,650 +1,745 @@
 /* =========================================================================
-   Anur Qoradalov — Riyaziyyat Jurnalı — Admin Panel
-   Dynamic type-based editor + GitHub REST API commit workflow.
-   Token, owner, repo, branch, and paths are stored in localStorage only.
+   Digital Garden — Admin Workflow
+   Local editing of items + GitHub REST API commit workflow.
    ========================================================================= */
 
 (function () {
   'use strict';
 
-  var LS_KEYS = {
-    token: 'rj-gh-token', owner: 'rj-gh-owner', repo: 'rj-gh-repo',
-    branch: 'rj-gh-branch', path: 'rj-gh-path', pdfDir: 'rj-gh-pdfdir'
-  };
+  var LS_SETTINGS = 'dg-admin-settings';
+  var LS_THEME = 'dg-theme';
 
-  var TYPE_LABELS = {
-    problems: 'Solved Problem', stories: 'Math Insight', code_animations: 'Codes',
-    youtube: 'YouTube Video', pdf: 'PDF Document'
-  };
+  var GH_API = 'https://api.github.com';
 
   var state = {
-    data: { meta: {}, problems: [], stories: [], code_animations: [], youtube: [], pdf: [] },
-    dataSha: null,
-    staged: [],              // list of {action:'upsert'|'delete', type, id}
-    editing: null,           // {type, id} or null for new
-    tags: [],
-    stagedPdf: null,         // {name, base64, mime}
-    connected: false
+    settings: loadSettings(),
+    items: [],
+    dataSha: null,          // blob sha of data.json on GitHub, needed to update it
+    editingId: null,        // id of item currently open in the editor, or null for "new"
+    tags: [],                // tags currently in the tag-input for the open editor
+    pendingPdf: null,        // { fileName, base64, mime } queued for upload on commit
+    dirty: false,            // true once local items diverge from last-loaded remote state
+    isConnected: false
   };
 
   var els = {};
 
   document.addEventListener('DOMContentLoaded', init);
 
-  function init() {
+  async function init() {
     cacheEls();
+    initTheme();
     bindNav();
-    bindSettings();
-    bindEditor();
-    bindStageBar();
-    loadSettingsFromStorage();
-    loadLocalDataFallback();
-    renderItemsTable();
-    onTypeChange();
+    bindSettingsForm();
+    bindItemForm();
+    bindPdfDrop();
+    bindTagInput();
+    bindCommitBar();
 
-    els.itemsSearch.addEventListener('input', renderItemsTable);
-    els.itemsTypeFilter.addEventListener('change', renderItemsTable);
+    populateSettingsForm();
+    await loadInitialData();
   }
 
   function cacheEls() {
     els.navBtns = document.querySelectorAll('.admin-nav-btn');
-    els.panels = document.querySelectorAll('.admin-panel');
-    els.connStatus = document.getElementById('connStatus');
-    els.connLabel = document.getElementById('connLabel');
+    els.views = document.querySelectorAll('.admin-view');
+    els.itemRows = document.getElementById('itemRows');
+    els.newItemBtn = document.getElementById('newItemBtn');
+    els.refreshItemsBtn = document.getElementById('refreshItemsBtn');
 
-    els.itemsTable = document.getElementById('itemsTable');
-    els.itemsSearch = document.getElementById('itemsSearch');
-    els.itemsTypeFilter = document.getElementById('itemsTypeFilter');
-
+    els.itemForm = document.getElementById('itemForm');
     els.editorHeading = document.getElementById('editorHeading');
-    els.typeSelect = document.getElementById('typeSelect');
-    els.fTitle = document.getElementById('f_title');
-    els.typeFields = document.getElementById('typeFields');
-    els.fDate = document.getElementById('f_date');
-    els.tagInput = document.getElementById('tagInput');
-    els.fTagEntry = document.getElementById('f_tagEntry');
+    els.fId = document.getElementById('f-id');
+    els.fType = document.getElementById('f-type');
+    els.fTitle = document.getElementById('f-title');
+    els.fDesc = document.getElementById('f-desc');
+    els.fYoutubeUrl = document.getElementById('f-youtube-url');
+    els.fPdfUrl = document.getElementById('f-pdf-url');
+    els.fLatex = document.getElementById('f-latex');
+    els.fLinkUrl = document.getElementById('f-link-url');
+    els.fLinkLabel = document.getElementById('f-link-label');
+    els.fSourceUrl = document.getElementById('f-source-url');
+    els.fSourceLabel = document.getElementById('f-source-label');
+    els.fDate = document.getElementById('f-date');
+    els.fTagsInput = document.getElementById('f-tags-input');
+    els.tagInputRow = document.getElementById('tagInputRow');
+    els.latexPreview = document.getElementById('latexPreview');
     els.cancelEditBtn = document.getElementById('cancelEditBtn');
-    els.saveItemBtn = document.getElementById('saveItemBtn');
 
-    els.sToken = document.getElementById('s_token');
-    els.sOwner = document.getElementById('s_owner');
-    els.sRepo = document.getElementById('s_repo');
-    els.sBranch = document.getElementById('s_branch');
-    els.sPath = document.getElementById('s_path');
-    els.sPdfDir = document.getElementById('s_pdfDir');
-    els.testConnBtn = document.getElementById('testConnBtn');
+    els.pdfDrop = document.getElementById('pdfDrop');
+    els.pdfFileInput = document.getElementById('pdfFileInput');
+    els.pdfFileName = document.getElementById('pdfFileName');
+    els.pdfAssetPathHint = document.getElementById('pdfAssetPathHint');
+
+    els.settingsForm = document.getElementById('settingsForm');
+    els.sToken = document.getElementById('s-token');
+    els.sOwner = document.getElementById('s-owner');
+    els.sRepo = document.getElementById('s-repo');
+    els.sBranch = document.getElementById('s-branch');
+    els.sDatapath = document.getElementById('s-datapath');
+    els.sAssetpath = document.getElementById('s-assetpath');
+    els.togglePw = document.getElementById('togglePw');
     els.clearTokenBtn = document.getElementById('clearTokenBtn');
 
-    els.stageBar = document.getElementById('stageBar');
-    els.stageCount = document.getElementById('stageCount');
-    els.copyJsonBtn = document.getElementById('copyJsonBtn');
+    els.connStatus = document.getElementById('connStatus');
+    els.connStatusText = document.getElementById('connStatusText');
+
+    els.commitBar = document.getElementById('commitBar');
+    els.commitBarText = document.getElementById('commitBarText');
     els.commitBtn = document.getElementById('commitBtn');
-    els.toast = document.getElementById('toast');
+    els.copyPayloadBtn = document.getElementById('copyPayloadBtn');
+
+    els.toastStack = document.getElementById('toastStack');
   }
 
   /* ---------------------------------------------------------------------
-     Panel navigation
+     Theme
+     ------------------------------------------------------------------- */
+
+  function initTheme() {
+    var toggle = document.getElementById('themeToggle');
+    var stored = localStorage.getItem(LS_THEME);
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    applyTheme(stored || (prefersDark ? 'dark' : 'light'));
+    toggle.addEventListener('click', function () {
+      var current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+      var next = current === 'dark' ? 'light' : 'dark';
+      applyTheme(next);
+      localStorage.setItem(LS_THEME, next);
+    });
+  }
+
+  function applyTheme(theme) {
+    if (theme === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    else document.documentElement.removeAttribute('data-theme');
+  }
+
+  /* ---------------------------------------------------------------------
+     Settings (persisted in localStorage)
+     ------------------------------------------------------------------- */
+
+  function loadSettings() {
+    var defaults = { token: '', owner: '', repo: '', branch: 'main', dataPath: 'data.json', assetPath: 'assets/pdf/' };
+    try {
+      var raw = localStorage.getItem(LS_SETTINGS);
+      if (!raw) return defaults;
+      return Object.assign(defaults, JSON.parse(raw));
+    } catch (e) {
+      return defaults;
+    }
+  }
+
+  function saveSettings(s) {
+    localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
+  }
+
+  function populateSettingsForm() {
+    els.sToken.value = state.settings.token || '';
+    els.sOwner.value = state.settings.owner || '';
+    els.sRepo.value = state.settings.repo || '';
+    els.sBranch.value = state.settings.branch || 'main';
+    els.sDatapath.value = state.settings.dataPath || 'data.json';
+    els.sAssetpath.value = state.settings.assetPath || 'assets/pdf/';
+    els.pdfAssetPathHint.textContent = state.settings.assetPath || 'assets/pdf/';
+  }
+
+  function bindSettingsForm() {
+    els.settingsForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      state.settings = {
+        token: els.sToken.value.trim(),
+        owner: els.sOwner.value.trim(),
+        repo: els.sRepo.value.trim(),
+        branch: els.sBranch.value.trim() || 'main',
+        dataPath: els.sDatapath.value.trim() || 'data.json',
+        assetPath: normalizeFolder(els.sAssetpath.value.trim() || 'assets/pdf/')
+      };
+      saveSettings(state.settings);
+      els.pdfAssetPathHint.textContent = state.settings.assetPath;
+      toast('info', 'Testing connection…', 'Checking token and repository access.');
+      await testConnection();
+      if (state.isConnected) await loadInitialData(true);
+    });
+
+    els.togglePw.addEventListener('click', function () {
+      var isPw = els.sToken.type === 'password';
+      els.sToken.type = isPw ? 'text' : 'password';
+    });
+
+    els.clearTokenBtn.addEventListener('click', function () {
+      state.settings.token = '';
+      els.sToken.value = '';
+      saveSettings(state.settings);
+      setConnStatus('idle', 'Not connected');
+      toast('info', 'Token cleared', 'You can still edit locally and copy the JSON payload.');
+    });
+  }
+
+  function normalizeFolder(p) {
+    p = p.replace(/^\/+/, '');
+    if (p && !p.endsWith('/')) p += '/';
+    return p;
+  }
+
+  function hasCredentials() {
+    var s = state.settings;
+    return !!(s.token && s.owner && s.repo);
+  }
+
+  /* ---------------------------------------------------------------------
+     GitHub REST API helpers (Contents API)
+     ------------------------------------------------------------------- */
+
+  function ghHeaders() {
+    return {
+      Authorization: 'Bearer ' + state.settings.token,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+  }
+
+  function ghContentsUrl(path) {
+    var s = state.settings;
+    return GH_API + '/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
+      '/contents/' + path.split('/').map(encodeURIComponent).join('/') + '?ref=' + encodeURIComponent(s.branch);
+  }
+
+  async function ghGetFile(path) {
+    var res = await fetch(ghContentsUrl(path), { headers: ghHeaders() });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(await ghErrorMessage(res));
+    var json = await res.json();
+    var content = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ''))));
+    return { content: content, sha: json.sha };
+  }
+
+  async function ghGetFileRaw(path) {
+    // For binary/base64-agnostic existence checks (e.g. PDFs) — returns sha only if present.
+    var res = await fetch(ghContentsUrl(path), { headers: ghHeaders() });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(await ghErrorMessage(res));
+    var json = await res.json();
+    return { sha: json.sha };
+  }
+
+  async function ghPutFile(path, base64Content, message, sha) {
+    var s = state.settings;
+    var url = GH_API + '/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo) +
+      '/contents/' + path.split('/').map(encodeURIComponent).join('/');
+    var body = { message: message, content: base64Content, branch: s.branch };
+    if (sha) body.sha = sha;
+    var res = await fetch(url, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders()), body: JSON.stringify(body) });
+    if (!res.ok) throw new Error(await ghErrorMessage(res));
+    return res.json();
+  }
+
+  async function ghErrorMessage(res) {
+    try {
+      var j = await res.json();
+      return (j && j.message) ? (res.status + ': ' + j.message) : ('HTTP ' + res.status);
+    } catch (e) {
+      return 'HTTP ' + res.status;
+    }
+  }
+
+  function utf8ToBase64(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  async function testConnection() {
+    if (!hasCredentials()) {
+      setConnStatus('idle', 'Not connected');
+      state.isConnected = false;
+      return false;
+    }
+    try {
+      var s = state.settings;
+      var res = await fetch(GH_API + '/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo), { headers: ghHeaders() });
+      if (!res.ok) throw new Error(await ghErrorMessage(res));
+      var repo = await res.json();
+      var canPush = repo.permissions && (repo.permissions.push || repo.permissions.admin);
+      if (!canPush) {
+        setConnStatus('error', 'Connected, but no write access');
+        toast('error', 'Limited access', 'This token can read the repo but may not be able to push commits.');
+        state.isConnected = false;
+        return false;
+      }
+      setConnStatus('connected', 'Connected to ' + s.owner + '/' + s.repo);
+      toast('success', 'Connected', 'Token verified with write access to ' + s.owner + '/' + s.repo + '.');
+      state.isConnected = true;
+      return true;
+    } catch (err) {
+      setConnStatus('error', 'Connection failed');
+      toast('error', 'Could not connect', err.message);
+      state.isConnected = false;
+      return false;
+    }
+  }
+
+  function setConnStatus(kind, text) {
+    els.connStatus.classList.remove('is-connected', 'is-error');
+    if (kind === 'connected') els.connStatus.classList.add('is-connected');
+    if (kind === 'error') els.connStatus.classList.add('is-error');
+    els.connStatusText.textContent = text;
+  }
+
+  /* ---------------------------------------------------------------------
+     Loading data (GitHub if connected, else local data.json for preview)
+     ------------------------------------------------------------------- */
+
+  async function loadInitialData(forceRemote) {
+    if (hasCredentials()) {
+      var ok = await testConnection();
+      if (ok || forceRemote) {
+        try {
+          var file = await ghGetFile(state.settings.dataPath);
+          if (file) {
+            var parsed = JSON.parse(file.content);
+            state.items = normalizeItems(parsed.items || []);
+            state.dataSha = file.sha;
+            state.dirty = false;
+            updateCommitBar();
+            renderItems();
+            toast('success', 'Content loaded', 'Loaded ' + state.items.length + ' items from GitHub.');
+            return;
+          } else {
+            toast('info', 'No data.json found', 'Starting from an empty list — it will be created on first commit.');
+            state.items = [];
+            state.dataSha = null;
+            renderItems();
+            return;
+          }
+        } catch (err) {
+          toast('error', 'Could not load data.json', err.message);
+        }
+      }
+    }
+    // Fallback: local file preview only, no push target.
+    try {
+      var res = await fetch('data.json', { cache: 'no-store' });
+      if (res.ok) {
+        var data = await res.json();
+        state.items = normalizeItems(data.items || []);
+        renderItems();
+        toast('info', 'Read-only preview', 'Loaded local data.json for preview. Connect GitHub Settings to enable commits.');
+      }
+    } catch (e) { /* no local file available either — start empty */ }
+  }
+
+  function normalizeItems(rawItems) {
+    return rawItems.map(function (item) {
+      return {
+        id: item.id || genId(),
+        type: item.type || 'link',
+        title: item.title || '',
+        description: item.description || '',
+        url: item.url || '',
+        content: item.content || '',
+        date: item.date || '',
+        tags: Array.isArray(item.tags) ? item.tags : [],
+        meta: item.meta || {}
+      };
+    });
+  }
+
+  function genId() {
+    return 'itm_' + Math.random().toString(36).slice(2, 9);
+  }
+
+  /* ---------------------------------------------------------------------
+     Nav: switching between Items / Editor / Settings views
      ------------------------------------------------------------------- */
 
   function bindNav() {
     els.navBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () { showPanel(btn.dataset.panel); });
+      btn.addEventListener('click', function () { switchView(btn.dataset.view); });
     });
+    els.newItemBtn.addEventListener('click', function () { openEditor(null); });
+    els.refreshItemsBtn.addEventListener('click', function () { loadInitialData(true); });
+    els.cancelEditBtn.addEventListener('click', function () { switchView('items'); });
   }
 
-  function showPanel(name) {
-    els.navBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.panel === name); });
-    els.panels.forEach(function (p) { p.classList.toggle('is-active', p.id === 'panel-' + name); });
-    if (name === 'items') renderItemsTable();
+  function switchView(view) {
+    els.navBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.view === view); });
+    els.views.forEach(function (v) { v.classList.toggle('is-active', v.dataset.view === view); });
   }
 
   /* ---------------------------------------------------------------------
-     Settings: load/save + connection test
+     Item list rendering
      ------------------------------------------------------------------- */
 
-  function loadSettingsFromStorage() {
-    els.sToken.value = localStorage.getItem(LS_KEYS.token) || '';
-    els.sOwner.value = localStorage.getItem(LS_KEYS.owner) || '';
-    els.sRepo.value = localStorage.getItem(LS_KEYS.repo) || '';
-    els.sBranch.value = localStorage.getItem(LS_KEYS.branch) || 'main';
-    els.sPath.value = localStorage.getItem(LS_KEYS.path) || 'data.json';
-    els.sPdfDir.value = localStorage.getItem(LS_KEYS.pdfDir) || 'assets/pdf/';
+  var TYPE_LABEL = { youtube: 'Video', pdf: 'PDF', latex: 'LaTeX', link: 'Link' };
+
+  function renderItems() {
+    els.itemRows.innerHTML = '';
+    if (!state.items.length) {
+      var empty = document.createElement('div');
+      empty.className = 'item-row';
+      empty.innerHTML = '<div class="mono" style="grid-column:1/-1;color:var(--ink-faint);">No items yet — add your first one.</div>';
+      els.itemRows.appendChild(empty);
+      return;
+    }
+    state.items
+      .slice()
+      .sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); })
+      .forEach(function (item) {
+        var row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML =
+          '<div><span class="tag type-' + item.type + '">' + (TYPE_LABEL[item.type] || item.type) + '</span></div>' +
+          '<div><div class="it-title">' + escapeHtml(item.title) + '</div><div class="it-desc">' + escapeHtml(item.description || '') + '</div></div>' +
+          '<div class="mono" style="font-size:0.82rem; color:var(--ink-faint);">' + (item.date || '—') + '</div>' +
+          '<div class="it-actions">' +
+          '<button class="icon-btn" data-action="edit" data-id="' + item.id + '" aria-label="Edit"><svg aria-hidden="true"><use href="#i-edit"/></svg></button>' +
+          '<button class="icon-btn danger" data-action="delete" data-id="' + item.id + '" aria-label="Delete"><svg aria-hidden="true"><use href="#i-trash"/></svg></button>' +
+          '</div>';
+        els.itemRows.appendChild(row);
+      });
+
+    els.itemRows.querySelectorAll('[data-action="edit"]').forEach(function (btn) {
+      btn.addEventListener('click', function () { openEditor(btn.dataset.id); });
+    });
+    els.itemRows.querySelectorAll('[data-action="delete"]').forEach(function (btn) {
+      btn.addEventListener('click', function () { deleteItem(btn.dataset.id); });
+    });
   }
 
-  function saveSettingsToStorage() {
-    localStorage.setItem(LS_KEYS.token, els.sToken.value.trim());
-    localStorage.setItem(LS_KEYS.owner, els.sOwner.value.trim());
-    localStorage.setItem(LS_KEYS.repo, els.sRepo.value.trim());
-    localStorage.setItem(LS_KEYS.branch, els.sBranch.value.trim() || 'main');
-    localStorage.setItem(LS_KEYS.path, els.sPath.value.trim() || 'data.json');
-    localStorage.setItem(LS_KEYS.pdfDir, els.sPdfDir.value.trim() || 'assets/pdf/');
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
-  function ghConfig() {
-    return {
-      token: localStorage.getItem(LS_KEYS.token) || '',
-      owner: localStorage.getItem(LS_KEYS.owner) || '',
-      repo: localStorage.getItem(LS_KEYS.repo) || '',
-      branch: localStorage.getItem(LS_KEYS.branch) || 'main',
-      path: localStorage.getItem(LS_KEYS.path) || 'data.json',
-      pdfDir: localStorage.getItem(LS_KEYS.pdfDir) || 'assets/pdf/'
+  function deleteItem(id) {
+    var item = state.items.find(function (i) { return i.id === id; });
+    if (!item) return;
+    if (!confirm('Delete "' + item.title + '"? This cannot be undone once committed.')) return;
+    state.items = state.items.filter(function (i) { return i.id !== id; });
+    state.dirty = true;
+    renderItems();
+    updateCommitBar();
+    toast('info', 'Item removed', '"' + item.title + '" will be deleted once you commit.');
+  }
+
+  /* ---------------------------------------------------------------------
+     Editor form
+     ------------------------------------------------------------------- */
+
+  function bindItemForm() {
+    els.fType.addEventListener('change', function () {
+      updateTypeFields(els.fType.value);
+      if (els.fType.value === 'latex') renderLatexLive();
+    });
+    els.fLatex.addEventListener('input', renderLatexLive);
+
+    els.itemForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      saveItemFromForm();
+    });
+
+    updateTypeFields('youtube');
+  }
+
+  function updateTypeFields(type) {
+    document.querySelectorAll('.type-fields').forEach(function (group) {
+      group.classList.toggle('is-active', group.dataset.typeFields === type);
+    });
+  }
+
+  function renderLatexLive() {
+    var src = els.fLatex.value.trim();
+    if (!src) {
+      els.latexPreview.innerHTML = '<span class="ph">Live preview appears here</span>';
+      return;
+    }
+    if (!window.katex) {
+      els.latexPreview.innerHTML = '<span class="ph">Loading renderer…</span>';
+      return;
+    }
+    try {
+      katex.render(src, els.latexPreview, { throwOnError: false, displayMode: true });
+    } catch (e) {
+      els.latexPreview.innerHTML = '<span class="ph">Could not render — check LaTeX syntax</span>';
+    }
+  }
+
+  function openEditor(id) {
+    state.editingId = id;
+    state.pendingPdf = null;
+    els.pdfFileName.textContent = '';
+    els.pdfFileInput.value = '';
+
+    if (id) {
+      var item = state.items.find(function (i) { return i.id === id; });
+      if (!item) return;
+      els.editorHeading.textContent = 'Edit Item';
+      els.fId.value = item.id;
+      els.fType.value = item.type;
+      els.fTitle.value = item.title;
+      els.fDesc.value = item.description;
+      els.fDate.value = item.date;
+      els.fYoutubeUrl.value = item.type === 'youtube' ? item.url : '';
+      els.fPdfUrl.value = item.type === 'pdf' ? item.url : '';
+      els.fLatex.value = item.type === 'latex' ? item.content : '';
+      els.fLinkUrl.value = item.type === 'link' ? item.url : '';
+      els.fLinkLabel.value = item.meta.linkLabel || '';
+      els.fSourceUrl.value = item.meta.sourceUrl || '';
+      els.fSourceLabel.value = item.meta.sourceLabel || '';
+      state.tags = item.tags.slice();
+    } else {
+      els.editorHeading.textContent = 'Add New Item';
+      els.itemForm.reset();
+      els.fId.value = '';
+      els.fType.value = 'youtube';
+      els.fDate.value = new Date().toISOString().slice(0, 10);
+      state.tags = [];
+    }
+
+    updateTypeFields(els.fType.value);
+    renderLatexLive();
+    renderTagChips();
+    switchView('editor');
+  }
+
+  function saveItemFromForm() {
+    var type = els.fType.value;
+    var title = els.fTitle.value.trim();
+    if (!title) { toast('error', 'Title required', 'Give this item a title before saving.'); return; }
+
+    var url = '', content = '', meta = {};
+
+    if (type === 'youtube') {
+      url = els.fYoutubeUrl.value.trim();
+      if (!url) { toast('error', 'YouTube URL required', 'Paste a video link.'); return; }
+    } else if (type === 'pdf') {
+      url = els.fPdfUrl.value.trim();
+      if (state.pendingPdf) {
+        url = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
+        els.fPdfUrl.value = url;
+      }
+      if (!url) { toast('error', 'PDF required', 'Upload a file or enter an existing path.'); return; }
+    } else if (type === 'latex') {
+      content = els.fLatex.value.trim();
+      if (!content) { toast('error', 'LaTeX source required', 'Enter the formula to render.'); return; }
+    } else if (type === 'link') {
+      url = els.fLinkUrl.value.trim();
+      if (!url) { toast('error', 'Link URL required', 'Paste the destination URL.'); return; }
+      meta.linkLabel = els.fLinkLabel.value.trim();
+    }
+
+    if (els.fSourceUrl.value.trim()) {
+      meta.sourceUrl = els.fSourceUrl.value.trim();
+      meta.sourceLabel = els.fSourceLabel.value.trim() || 'Source';
+    }
+
+    var item = {
+      id: els.fId.value || genId(),
+      type: type,
+      title: title,
+      description: els.fDesc.value.trim(),
+      url: url,
+      content: content,
+      date: els.fDate.value || new Date().toISOString().slice(0, 10),
+      tags: state.tags.slice(),
+      meta: meta
     };
-  }
 
-  function bindSettings() {
-    els.testConnBtn.addEventListener('click', function () {
-      saveSettingsToStorage();
-      testConnection();
-    });
-    els.clearTokenBtn.addEventListener('click', function () {
-      localStorage.removeItem(LS_KEYS.token);
-      els.sToken.value = '';
-      setConnected(false, 'Token cleared');
-    });
-  }
+    var existingIdx = state.items.findIndex(function (i) { return i.id === item.id; });
+    if (existingIdx >= 0) state.items[existingIdx] = item;
+    else state.items.push(item);
 
-  function setConnected(ok, label) {
-    state.connected = ok;
-    els.connStatus.classList.toggle('is-connected', ok);
-    els.connLabel.textContent = label;
-  }
-
-  async function testConnection() {
-    var cfg = ghConfig();
-    if (!cfg.token || !cfg.owner || !cfg.repo) {
-      setConnected(false, 'Missing token, owner, or repo');
-      showToast('Fill in token, owner, and repository name first.', true);
-      return;
-    }
-    setConnected(false, 'Connecting…');
-    try {
-      var res = await fetch('https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo, {
-        headers: ghHeaders(cfg.token)
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      setConnected(true, 'Connected to ' + cfg.owner + '/' + cfg.repo);
-      showToast('Connected successfully.', false, true);
-      await pullRemoteData(cfg);
-    } catch (err) {
-      setConnected(false, 'Connection failed');
-      showToast('Could not connect: ' + err.message, true);
-    }
-  }
-
-  function ghHeaders(token, extra) {
-    var h = { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json' };
-    if (extra) Object.assign(h, extra);
-    return h;
-  }
-
-  async function pullRemoteData(cfg) {
-    try {
-      var res = await fetch(
-        'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path + '?ref=' + cfg.branch,
-        { headers: ghHeaders(cfg.token) }
-      );
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      var json = await res.json();
-      state.dataSha = json.sha;
-      var decoded = decodeURIComponent(escape(atob(json.content.replace(/\n/g, ''))));
-      var parsed = JSON.parse(decoded);
-      applyRemoteData(parsed);
-      showToast('Loaded current data.json from GitHub.', false, true);
-    } catch (err) {
-      showToast('Could not fetch data.json from repo (' + err.message + '). Using local copy.', true);
-    }
-  }
-
-  function applyRemoteData(parsed) {
-    state.data.meta = parsed.meta || state.data.meta;
-    state.data.problems = parsed.problems || [];
-    state.data.stories = parsed.stories || [];
-    state.data.code_animations = parsed.code_animations || [];
-    state.data.youtube = parsed.youtube || [];
-    state.data.pdf = parsed.pdf || [];
-    renderItemsTable();
-  }
-
-  function loadLocalDataFallback() {
-    fetch('data.json', { cache: 'no-store' }).then(function (r) {
-      return r.ok ? r.json() : null;
-    }).then(function (json) {
-      if (json && state.staged.length === 0) applyRemoteData(json);
-    }).catch(function () { /* ignore — repo may not have this file locally yet */ });
+    state.dirty = true;
+    renderItems();
+    updateCommitBar();
+    toast('success', existingIdx >= 0 ? 'Item updated' : 'Item added', '"' + title + '" will be included in the next commit.');
+    switchView('items');
   }
 
   /* ---------------------------------------------------------------------
-     Items table
+     Tags
      ------------------------------------------------------------------- */
 
-  function flattenItems() {
-    var out = [];
-    Object.keys(TYPE_LABELS).forEach(function (type) {
-      (state.data[type] || []).forEach(function (item) {
-        out.push({ type: type, item: item });
-      });
-    });
-    out.sort(function (a, b) { return (b.item.date || '').localeCompare(a.item.date || ''); });
-    return out;
-  }
-
-  function renderItemsTable() {
-    var q = (els.itemsSearch.value || '').trim().toLowerCase();
-    var typeFilter = els.itemsTypeFilter.value;
-    var rows = flattenItems().filter(function (r) {
-      if (typeFilter !== 'all' && r.type !== typeFilter) return false;
-      if (!q) return true;
-      return (r.item.title || '').toLowerCase().indexOf(q) !== -1;
-    });
-
-    els.itemsTable.innerHTML = '';
-    if (!rows.length) {
-      els.itemsTable.innerHTML = '<p class="field-hint">No items yet. Use "Add New Item" to create one.</p>';
-      return;
-    }
-
-    rows.forEach(function (r) {
-      var row = document.createElement('div');
-      row.className = 'item-row';
-      row.innerHTML =
-        '<span class="item-row-kind">' + TYPE_LABELS[r.type].split(' ')[0] + '</span>' +
-        '<span class="item-row-title"></span>' +
-        '<span class="item-row-date">' + escapeHtml(r.item.date || '') + '</span>' +
-        '<span class="item-row-actions">' +
-        '<button type="button" data-act="edit" title="Edit">✎</button>' +
-        '<button type="button" data-act="delete" class="danger" title="Delete">🗑</button>' +
-        '</span>';
-      row.querySelector('.item-row-title').textContent = r.item.title || 'Untitled';
-      row.querySelector('[data-act="edit"]').addEventListener('click', function () { openEditor(r.type, r.item.id); });
-      row.querySelector('[data-act="delete"]').addEventListener('click', function () { deleteItem(r.type, r.item.id); });
-      els.itemsTable.appendChild(row);
-    });
-  }
-
-  function deleteItem(type, id) {
-    if (!confirm('Remove this item from the list? This stages a delete — commit to make it permanent.')) return;
-    state.data[type] = state.data[type].filter(function (i) { return i.id !== id; });
-    stageChange('delete', type, id);
-    renderItemsTable();
-  }
-
-  /* ---------------------------------------------------------------------
-     Editor: dynamic fields per content type
-     ------------------------------------------------------------------- */
-
-  function bindEditor() {
-    els.typeSelect.addEventListener('change', onTypeChange);
-    els.cancelEditBtn.addEventListener('click', function () { resetEditor(); showPanel('items'); });
-    els.saveItemBtn.addEventListener('click', saveItemFromForm);
-
-    els.fTagEntry.addEventListener('keydown', function (e) {
+  function bindTagInput() {
+    els.fTagsInput.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ',') {
         e.preventDefault();
-        addTag(els.fTagEntry.value);
-        els.fTagEntry.value = '';
+        var val = els.fTagsInput.value.trim().replace(/,$/, '');
+        if (val && state.tags.indexOf(val) === -1) {
+          state.tags.push(val);
+          renderTagChips();
+        }
+        els.fTagsInput.value = '';
+      } else if (e.key === 'Backspace' && !els.fTagsInput.value && state.tags.length) {
+        state.tags.pop();
+        renderTagChips();
       }
     });
+  }
 
-    document.querySelector('[data-panel="editor"]').addEventListener('click', function () {
-      if (!state.editing) resetEditor();
+  function renderTagChips() {
+    els.tagInputRow.querySelectorAll('.tag-chip').forEach(function (chip) { chip.remove(); });
+    state.tags.forEach(function (tag) {
+      var chip = document.createElement('span');
+      chip.className = 'tag-chip';
+      chip.innerHTML = escapeHtml(tag) + '<button type="button" aria-label="Remove tag"><svg aria-hidden="true"><use href="#i-close"/></svg></button>';
+      chip.querySelector('button').addEventListener('click', function () {
+        state.tags = state.tags.filter(function (t) { return t !== tag; });
+        renderTagChips();
+      });
+      els.tagInputRow.insertBefore(chip, els.fTagsInput);
     });
   }
 
-  function onTypeChange() {
-    renderTypeFields(els.typeSelect.value, {});
-  }
+  /* ---------------------------------------------------------------------
+     PDF upload (drag/drop + click), staged for commit
+     ------------------------------------------------------------------- */
 
-  function renderTypeFields(type, data) {
-    var html = '';
-    if (type === 'problems') {
-      html =
-        fieldRow('Course', 'f_course', data.course, 'e.g. Differensial Tənliklər') +
-        textareaField('Question (LaTeX)', 'f_question', data.question_latex, 'e.g. Filippov № 64 şərti…') +
-        '<div class="latex-preview" id="previewQuestion"></div>' +
-        textareaField('Solution (LaTeX)', 'f_solution', data.solution_latex, 'Tam həll, addım-addım…') +
-        '<div class="latex-preview" id="previewSolution"></div>' +
-        fieldRow('Bibliography (optional)', 'f_bib', data.bibliography, 'e.g. Filippov, A. F. — Задачник по дифференциальным уравнениям, № 64.');
-    } else if (type === 'stories') {
-      html =
-        textareaField('Content', 'f_content', data.content, 'Məqalə mətni…') +
-        fieldRow('Image URL', 'f_image', data.image, 'assets/img/… or https://…');
-    } else if (type === 'code_animations') {
-      html =
-        '<div class="field-group"><label class="field-label">Language</label>' +
-        '<select id="f_language" class="admin-input">' +
-        ['Manim', 'Python', 'MATLAB', 'C++', 'Other'].map(function (l) {
-          return '<option value="' + l + '"' + (data.language === l ? ' selected' : '') + '>' + l + '</option>';
-        }).join('') + '</select></div>' +
-        textareaField('Code snippet', 'f_snippet', data.code_snippet, 'Paste the code to display…') +
-        fieldRow('Animation URL (video)', 'f_animurl', data.animation_url, 'YouTube / mp4 link') +
-        fieldRow('GitHub URL', 'f_githuburl', data.github_url, 'https://github.com/…');
-    } else if (type === 'youtube') {
-      html =
-        fieldRow('Video URL', 'f_videourl', data.video_url, 'https://youtu.be/…') +
-        '<div class="latex-preview" id="ytPreview" style="font-family:var(--font-ui);font-size:12.5px;">Paste a link to preview the thumbnail.</div>' +
-        textareaField('Description', 'f_ytdesc', data.description, 'Qısa təsvir…');
-    } else if (type === 'pdf') {
-      html =
-        fieldRow('PDF URL / path', 'f_pdfurl', data.pdf_url, 'assets/pdf/… or https://…') +
-        '<div class="dropzone" id="pdfDropzone">Drag a PDF here, or <strong>click to choose a file</strong> — staged for upload on commit.<input type="file" id="pdfFileInput" accept="application/pdf" hidden></div>' +
-        fieldRow('Custom thumbnail URL (optional)', 'f_pdfthumb', data.custom_thumbnail, 'assets/img/…') +
-        fieldRow('Course', 'f_pdfcourse', data.course, 'e.g. Kompleks Analiz');
-    }
-    els.typeFields.innerHTML = html;
-
-    if (type === 'problems') {
-      bindLatexPreview('f_question', 'previewQuestion');
-      bindLatexPreview('f_solution', 'previewSolution');
-    }
-    if (type === 'youtube') bindYoutubePreview();
-    if (type === 'pdf') bindPdfDropzone();
-  }
-
-  function fieldRow(label, id, value, placeholder) {
-    return '<div class="field-group"><label class="field-label">' + label + '</label>' +
-      '<input type="text" id="' + id + '" class="admin-input" value="' + escapeAttr(value || '') + '" placeholder="' + escapeAttr(placeholder || '') + '"></div>';
-  }
-
-  function textareaField(label, id, value, placeholder) {
-    return '<div class="field-group"><label class="field-label">' + label + '</label>' +
-      '<textarea id="' + id + '" class="admin-input" placeholder="' + escapeAttr(placeholder || '') + '">' + escapeHtml(value || '') + '</textarea></div>';
-  }
-
-  function bindLatexPreview(fieldId, previewId) {
-    var field = document.getElementById(fieldId);
-    var preview = document.getElementById(previewId);
-    var render = function () {
-      if (!window.katex) { preview.textContent = field.value; return; }
-      try { katex.render(field.value || '', preview, { throwOnError: false, displayMode: true }); }
-      catch (e) { preview.textContent = field.value; }
-    };
-    field.addEventListener('input', debounce(render, 180));
-    render();
-  }
-
-  function bindYoutubePreview() {
-    var field = document.getElementById('f_videourl');
-    var preview = document.getElementById('ytPreview');
-    var render = function () {
-      var id = extractYouTubeId(field.value);
-      if (id) {
-        preview.innerHTML = '<img src="https://img.youtube.com/vi/' + id + '/hqdefault.jpg" style="width:160px;border-radius:6px;display:block;" alt="">';
-      } else {
-        preview.textContent = 'Paste a link to preview the thumbnail.';
-      }
-    };
-    field.addEventListener('input', debounce(render, 180));
-    render();
-  }
-
-  function bindPdfDropzone() {
-    var zone = document.getElementById('pdfDropzone');
-    var input = document.getElementById('pdfFileInput');
-    zone.addEventListener('click', function () { input.click(); });
-    zone.addEventListener('dragover', function (e) { e.preventDefault(); zone.classList.add('is-drag'); });
-    zone.addEventListener('dragleave', function () { zone.classList.remove('is-drag'); });
-    zone.addEventListener('drop', function (e) {
+  function bindPdfDrop() {
+    els.pdfDrop.addEventListener('click', function () { els.pdfFileInput.click(); });
+    els.pdfDrop.addEventListener('dragover', function (e) { e.preventDefault(); els.pdfDrop.classList.add('is-drag'); });
+    els.pdfDrop.addEventListener('dragleave', function () { els.pdfDrop.classList.remove('is-drag'); });
+    els.pdfDrop.addEventListener('drop', function (e) {
       e.preventDefault();
-      zone.classList.remove('is-drag');
-      if (e.dataTransfer.files[0]) handlePdfFile(e.dataTransfer.files[0], zone);
+      els.pdfDrop.classList.remove('is-drag');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handlePdfFile(e.dataTransfer.files[0]);
     });
-    input.addEventListener('change', function () {
-      if (input.files[0]) handlePdfFile(input.files[0], zone);
+    els.pdfFileInput.addEventListener('change', function () {
+      if (els.pdfFileInput.files[0]) handlePdfFile(els.pdfFileInput.files[0]);
     });
   }
 
-  function handlePdfFile(file, zone) {
-    if (file.type !== 'application/pdf') { showToast('Please choose a PDF file.', true); return; }
+  function handlePdfFile(file) {
+    if (file.type !== 'application/pdf') {
+      toast('error', 'Not a PDF', 'Please choose a .pdf file.');
+      return;
+    }
     var reader = new FileReader();
     reader.onload = function () {
       var base64 = reader.result.split(',')[1];
-      state.stagedPdf = { name: file.name, base64: base64 };
-      zone.innerHTML = 'Staged: <strong>' + escapeHtml(file.name) + '</strong> — will upload on commit. Click to replace.';
-      var urlField = document.getElementById('f_pdfurl');
-      if (urlField && !urlField.value) urlField.value = ghConfig().pdfDir.replace(/\/?$/, '/') + file.name;
+      state.pendingPdf = { fileName: sanitizeFileName(file.name), base64: base64 };
+      els.pdfFileName.textContent = state.pendingPdf.fileName + ' — ' + Math.round(file.size / 1024) + ' KB (staged)';
+      els.fPdfUrl.value = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
     };
     reader.readAsDataURL(file);
   }
 
-  /* ---- tags ---- */
-
-  function addTag(raw) {
-    var t = raw.trim().replace(/,$/, '');
-    if (!t || state.tags.indexOf(t) !== -1) return;
-    state.tags.push(t);
-    renderTagChips();
-  }
-
-  function renderTagChips() {
-    Array.prototype.forEach.call(els.tagInput.querySelectorAll('.tag-chip'), function (c) { c.remove(); });
-    state.tags.forEach(function (t) {
-      var chip = document.createElement('span');
-      chip.className = 'tag-chip';
-      chip.innerHTML = '<span></span><button type="button" aria-label="Remove">×</button>';
-      chip.querySelector('span').textContent = t;
-      chip.querySelector('button').addEventListener('click', function () {
-        state.tags = state.tags.filter(function (x) { return x !== t; });
-        renderTagChips();
-      });
-      els.tagInput.insertBefore(chip, els.fTagEntry);
-    });
-  }
-
-  /* ---- open / reset / save ---- */
-
-  function openEditor(type, id) {
-    var item = (state.data[type] || []).find(function (i) { return i.id === id; });
-    if (!item) return;
-    state.editing = { type: type, id: id };
-    els.editorHeading.textContent = 'Edit — ' + (item.title || '');
-    els.typeSelect.value = type;
-    els.typeSelect.disabled = true;
-    els.fTitle.value = item.title || '';
-    els.fDate.value = item.date || '';
-    state.tags = (item.tags || []).slice();
-    renderTypeFields(type, item);
-    renderTagChips();
-    showPanel('editor');
-  }
-
-  function resetEditor() {
-    state.editing = null;
-    state.tags = [];
-    state.stagedPdf = null;
-    els.editorHeading.textContent = 'Add New Item';
-    els.typeSelect.disabled = false;
-    els.typeSelect.value = 'problems';
-    els.fTitle.value = '';
-    els.fDate.value = '';
-    renderTagChips();
-    renderTypeFields('problems', {});
-  }
-
-  function saveItemFromForm() {
-    var type = els.typeSelect.value;
-    var title = els.fTitle.value.trim();
-    if (!title) { showToast('Title is required.', true); return; }
-
-    var id = state.editing ? state.editing.id : genId(type);
-    var base = { id: id, title: title, date: els.fDate.value || '', tags: state.tags.slice() };
-    var item;
-
-    if (type === 'problems') {
-      item = Object.assign(base, {
-        course: val('f_course'), question_latex: val('f_question'),
-        solution_latex: val('f_solution'), bibliography: val('f_bib')
-      });
-    } else if (type === 'stories') {
-      item = Object.assign(base, { content: val('f_content'), image: val('f_image') });
-    } else if (type === 'code_animations') {
-      item = Object.assign(base, {
-        language: val('f_language'), code_snippet: val('f_snippet'),
-        animation_url: val('f_animurl'), github_url: val('f_githuburl')
-      });
-    } else if (type === 'youtube') {
-      item = Object.assign(base, { video_url: val('f_videourl'), description: val('f_ytdesc') });
-    } else if (type === 'pdf') {
-      item = Object.assign(base, {
-        pdf_url: val('f_pdfurl'), custom_thumbnail: val('f_pdfthumb'), course: val('f_pdfcourse')
-      });
-    }
-
-    if (state.editing && state.editing.type !== type) {
-      state.data[state.editing.type] = state.data[state.editing.type].filter(function (i) { return i.id !== state.editing.id; });
-    }
-
-    var list = state.data[type];
-    var idx = list.findIndex(function (i) { return i.id === id; });
-    if (idx !== -1) list[idx] = item; else list.push(item);
-
-    stageChange('upsert', type, id);
-    showToast('Staged locally — commit to publish.', false, true);
-    resetEditor();
-    showPanel('items');
-  }
-
-  function val(id) {
-    var el = document.getElementById(id);
-    return el ? el.value.trim() : '';
-  }
-
-  function genId(type) {
-    var prefix = { problems: 'prb', stories: 'sty', code_animations: 'cda', youtube: 'ytb', pdf: 'pdf' }[type] || 'itm';
-    return prefix + '_' + Math.random().toString(36).slice(2, 8);
+  function sanitizeFileName(name) {
+    return name.trim().toLowerCase().replace(/[^a-z0-9.\-_]+/g, '-').replace(/-+/g, '-');
   }
 
   /* ---------------------------------------------------------------------
-     Staging + commit
+     Commit bar + commit workflow
      ------------------------------------------------------------------- */
 
-  function stageChange(action, type, id) {
-    state.staged = state.staged.filter(function (s) { return !(s.type === type && s.id === id); });
-    state.staged.push({ action: action, type: type, id: id });
-    updateStageBar();
-  }
-
-  function updateStageBar() {
-    var n = state.staged.length;
-    els.stageBar.hidden = n === 0;
-    els.stageCount.textContent = n + (n === 1 ? ' staged change' : ' staged changes');
-  }
-
-  function bindStageBar() {
-    els.copyJsonBtn.addEventListener('click', function () {
-      navigator.clipboard.writeText(JSON.stringify(buildOutputData(), null, 2))
-        .then(function () { showToast('Copied data.json to clipboard.', false, true); })
-        .catch(function () { showToast('Could not copy — clipboard blocked.', true); });
-    });
+  function bindCommitBar() {
     els.commitBtn.addEventListener('click', commitToGitHub);
+    els.copyPayloadBtn.addEventListener('click', copyJsonPayload);
   }
 
-  function buildOutputData() {
+  function updateCommitBar() {
+    els.commitBar.style.display = state.dirty ? 'flex' : 'none';
+    els.commitBarText.textContent = state.dirty
+      ? 'You have unsaved local changes (' + state.items.length + ' items).'
+      : '';
+  }
+
+  function buildPayload() {
     return {
-      meta: Object.assign({}, state.data.meta, { updatedAt: new Date().toISOString() }),
-      problems: state.data.problems,
-      stories: state.data.stories,
-      code_animations: state.data.code_animations,
-      youtube: state.data.youtube,
-      pdf: state.data.pdf
+      meta: {
+        schemaVersion: '1.0.0',
+        siteTitle: 'Anur Qoradalov — Digital Garden',
+        updatedAt: new Date().toISOString()
+      },
+      items: state.items
     };
+  }
+
+  function copyJsonPayload() {
+    var json = JSON.stringify(buildPayload(), null, 2);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(json)
+        .then(function () { toast('success', 'Copied', 'data.json payload copied to your clipboard.'); })
+        .catch(function () { fallbackCopy(json); });
+    } else {
+      fallbackCopy(json);
+    }
+  }
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('success', 'Copied', 'data.json payload copied to your clipboard.'); }
+    catch (e) { toast('error', 'Copy failed', 'Select and copy the JSON manually.'); }
+    document.body.removeChild(ta);
   }
 
   async function commitToGitHub() {
-    var cfg = ghConfig();
-    if (!cfg.token || !cfg.owner || !cfg.repo) {
-      showToast('Set up GitHub Settings first (token, owner, repo).', true);
-      showPanel('settings');
+    if (!hasCredentials()) {
+      toast('error', 'Not connected', 'Add a GitHub token and repository in Settings first, or use Copy JSON as a fallback.');
+      switchView('settings');
       return;
     }
+
     els.commitBtn.disabled = true;
-    els.commitBtn.textContent = 'Committing…';
+    var originalLabel = els.commitBtn.innerHTML;
+    els.commitBtn.innerHTML = '<span class="spinner"></span> Committing…';
+
     try {
-      if (state.stagedPdf) {
-        await uploadPdf(cfg);
+      if (state.pendingPdf) {
+        toast('info', 'Uploading PDF…', state.pendingPdf.fileName);
+        var assetPath = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
+        var existing = await ghGetFileRaw(assetPath).catch(function () { return null; });
+        await ghPutFile(
+          assetPath,
+          state.pendingPdf.base64,
+          'Add asset: ' + state.pendingPdf.fileName,
+          existing ? existing.sha : undefined
+        );
+        toast('success', 'PDF uploaded', assetPath);
+        state.pendingPdf = null;
       }
-      await commitDataJson(cfg);
-      state.staged = [];
-      state.stagedPdf = null;
-      updateStageBar();
-      showToast('Committed to GitHub. Pages will redeploy shortly.', false, true);
+
+      var payload = buildPayload();
+      var contentBase64 = utf8ToBase64(JSON.stringify(payload, null, 2));
+      var result = await ghPutFile(
+        state.settings.dataPath,
+        contentBase64,
+        'Update content: ' + payload.items.length + ' items',
+        state.dataSha || undefined
+      );
+
+      state.dataSha = result.content ? result.content.sha : null;
+      state.dirty = false;
+      updateCommitBar();
+      toast('success', 'Committed', 'data.json updated on ' + state.settings.branch + '. GitHub Pages will redeploy shortly.');
     } catch (err) {
-      showToast('Commit failed: ' + err.message, true);
+      toast('error', 'Commit failed', err.message);
     } finally {
       els.commitBtn.disabled = false;
-      els.commitBtn.textContent = 'Commit to GitHub';
+      els.commitBtn.innerHTML = originalLabel;
     }
   }
 
-  async function uploadPdf(cfg) {
-    var path = cfg.pdfDir.replace(/\/?$/, '/') + state.stagedPdf.name;
-    var body = { message: 'Upload PDF: ' + state.stagedPdf.name, content: state.stagedPdf.base64, branch: cfg.branch };
-    var res = await fetch(
-      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + path,
-      { method: 'PUT', headers: ghHeaders(cfg.token, { 'Content-Type': 'application/json' }), body: JSON.stringify(body) }
-    );
-    if (!res.ok) { var e = await safeJson(res); throw new Error('PDF upload failed (' + res.status + ') ' + (e && e.message ? e.message : '')); }
-  }
-
-  async function commitDataJson(cfg) {
-    var payload = JSON.stringify(buildOutputData(), null, 2);
-    var contentB64 = btoa(unescape(encodeURIComponent(payload)));
-
-    // Refresh SHA right before writing, in case the remote file changed.
-    var sha = state.dataSha;
-    try {
-      var shaRes = await fetch(
-        'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path + '?ref=' + cfg.branch,
-        { headers: ghHeaders(cfg.token) }
-      );
-      if (shaRes.ok) { var shaJson = await shaRes.json(); sha = shaJson.sha; }
-    } catch (e) { /* file may not exist yet — fine, sha stays undefined */ }
-
-    var body = { message: 'Update data.json via admin panel', content: contentB64, branch: cfg.branch };
-    if (sha) body.sha = sha;
-
-    var res = await fetch(
-      'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path,
-      { method: 'PUT', headers: ghHeaders(cfg.token, { 'Content-Type': 'application/json' }), body: JSON.stringify(body) }
-    );
-    if (!res.ok) { var e = await safeJson(res); throw new Error('HTTP ' + res.status + ' ' + (e && e.message ? e.message : '')); }
-    var json = await res.json();
-    state.dataSha = json.content ? json.content.sha : null;
-  }
-
-  async function safeJson(res) { try { return await res.json(); } catch (e) { return null; } }
-
   /* ---------------------------------------------------------------------
-     Utils
+     Toasts
      ------------------------------------------------------------------- */
 
-  function extractYouTubeId(url) {
-    if (!url) return null;
-    var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{6,})/);
-    return m ? m[1] : null;
-  }
+  var ICONS = { success: '#i-check', error: '#i-alert', info: '#i-info' };
 
-  function debounce(fn, wait) {
-    var t;
-    return function () {
-      clearTimeout(t);
-      var args = arguments;
-      t = setTimeout(function () { fn.apply(null, args); }, wait);
-    };
-  }
-
-  function showToast(msg, isError, isSuccess) {
-    els.toast.textContent = msg;
-    els.toast.className = 'toast' + (isError ? ' is-error' : isSuccess ? ' is-success' : '');
-    els.toast.hidden = false;
-    clearTimeout(showToast._t);
-    showToast._t = setTimeout(function () { els.toast.hidden = true; }, 3600);
-  }
-
-  function escapeHtml(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  }
-  function escapeAttr(str) {
-    return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+  function toast(kind, title, message) {
+    var el = document.createElement('div');
+    el.className = 'toast toast-' + kind;
+    el.innerHTML =
+      '<svg aria-hidden="true"><use href="' + (ICONS[kind] || ICONS.info) + '"/></svg>' +
+      '<span class="toast-msg"><strong>' + escapeHtml(title) + '</strong>' + (message ? escapeHtml(message) : '') + '</span>' +
+      '<button class="toast-close" aria-label="Dismiss"><svg aria-hidden="true"><use href="#i-close"/></svg></button>';
+    el.querySelector('.toast-close').addEventListener('click', function () { el.remove(); });
+    els.toastStack.appendChild(el);
+    setTimeout(function () { if (el.parentNode) el.remove(); }, 6000);
   }
 
 })();

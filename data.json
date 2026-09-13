@@ -1,62 +1,58 @@
 {
   "meta": {
-    "schemaVersion": "2.0.0",
-    "siteTitle": "Anur Qoradalov — Riyaziyyat Jurnalı",
+    "schemaVersion": "1.0.0",
+    "siteTitle": "Anur Qoradalov — Digital Garden",
     "updatedAt": "2026-09-13T00:00:00Z"
   },
-  "problems": [
+  "items": [
     {
-      "id": "prb_f064",
-      "title": "Filippov № 64: Xətti Diferensial Tənliyin Həlli",
-      "course": "Diferensial Tənliklər",
-      "question_latex": "A. F. Filippovun məsələlər toplusundan \\text{№ 64}. Aşağıdakı xətti diferensial tənliyi həll edin: $$y' + y\\tan x = \\frac{1}{\\cos x}, \\qquad x \\in \\left(-\\frac{\\pi}{2}, \\frac{\\pi}{2}\\right).$$",
-      "solution_latex": "Tənlik birinci tərtib xətti qeyri-bircins diferensial tənlikdir: $$y' + p(x)y = q(x), \\qquad p(x) = \\tan x, \\quad q(x) = \\frac{1}{\\cos x}.$$ İnteqrallayıcı vuruğu tapaq: $$\\mu(x) = e^{\\int \\tan x \\, dx} = e^{-\\ln|\\cos x|} = \\frac{1}{\\cos x}.$$ Tənliyi $\\mu(x)$-ə vuraraq sol tərəfi tam törəmə şəklinə salırıq: $$\\frac{d}{dx}\\!\\left(\\frac{y}{\\cos x}\\right) = \\frac{1}{\\cos^2 x}.$$ Hər iki tərəfi inteqrallayaq: $$\\frac{y}{\\cos x} = \\tan x + C.$$ Buradan ümumi həll: $$y(x) = \\sin x + C\\cos x, \\qquad C \\in \\mathbb{R}.$$",
-      "bibliography": "Filippov, A. F. — Сборник задач по дифференциальным уравнениям, задача № 64.",
-      "date": "2026-07-11",
-      "tags": ["ode", "linear-equations"]
-    }
-  ],
-  "stories": [
-    {
-      "id": "sty_kakeya",
-      "title": "Kakeya Problemi: Bir İynəni Necə Fırlatmaq Olar?",
-      "content": "Kakeya problemi sadə bir sualla başlayır: müstəvidə bir vahid uzunluqlu iynəni 360 dərəcə fırlatmaq üçün ən kiçik sahəli fiqur hansıdır? Cavab, ilk baxışdan gözlənildiyi kimi bir dairə deyil — Besikoviç 1920-ci illərdə sahəsi istənilən qədər kiçik ola bilən fiqurlar qura biləcəyini göstərdi. Bu qeyri-adi nəticə həndəsi ölçü nəzəriyyəsinin əsasını qoydu və indi Hong Wangın 2026-cı il Fields mükafatına səbəb olan işlə birbaşa əlaqəlidir.",
-      "image": "",
-      "date": "2026-08-02",
-      "tags": ["geometry", "pop-science"]
-    }
-  ],
-  "code_animations": [
-    {
-      "id": "cda_cr",
-      "title": "Cauchy–Riemann Sahəsinin Manim Animasiyası",
-      "language": "Manim",
-      "code_snippet": "from manim import *\n\nclass CauchyRiemann(Scene):\n    def construct(self):\n        plane = ComplexPlane().add_coordinates()\n        title = MathTex(r\"f(z) = u(x, y) + i\\,v(x, y)\").to_edge(UP)\n        self.play(Create(plane), Write(title))\n        dot = Dot(plane.n2p(1 + 1j), color=YELLOW)\n        path = plane.plot_parametric_curve(\n            lambda t: plane.n2p(complex(np.cos(t), np.sin(t))),\n            t_range=[0, TAU],\n        )\n        self.play(MoveAlongPath(dot, path), run_time=4, rate_func=linear)\n        self.wait()",
-      "animation_url": "",
-      "github_url": "https://github.com/goradalovanur-bit",
-      "date": "2026-06-20",
-      "tags": ["Manim", "complex-analysis"]
-    }
-  ],
-  "youtube": [
-    {
-      "id": "ytb_hw",
-      "title": "Hong Wang (Fields 2026): Kakeya Problemi və Besikoviç Ağacı",
-      "video_url": "https://youtu.be/soK-6fPr2so",
-      "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
-      "date": "2026-08-02",
-      "tags": ["geometry", "guest-talk"]
-    }
-  ],
-  "pdf": [
-    {
-      "id": "pdf_ca",
+      "id": "itm_ynqk1a",
+      "type": "pdf",
       "title": "Exam Notes — Complex Analysis",
-      "pdf_url": "assets/pdf/complex-analysis-exam-notes.pdf",
-      "custom_thumbnail": "",
-      "course": "Kompleks Analiz",
+      "description": "Consolidated revision notes covering Cauchy's integral formula, Liouville's theorem, and residue calculus, built for the final exam.",
+      "url": "assets/pdf/complex-analysis-exam-notes.pdf",
+      "content": "",
       "date": "2026-05-14",
-      "tags": ["complex-analysis", "exam-prep"]
+      "tags": ["complex-analysis", "exam-prep"],
+      "meta": {
+        "sourceUrl": "notes/source/complex-analysis-exam-notes.tex",
+        "sourceLabel": ".tex Code"
+      }
+    },
+    {
+      "id": "itm_r3f7pq",
+      "type": "youtube",
+      "title": "Hong Wang (Fields 2026): Kakeya Problemi və Besikoviç Ağacı",
+      "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
+      "url": "https://youtu.be/soK-6fPr2so",
+      "content": "",
+      "date": "2026-08-02",
+      "tags": ["geometry", "guest-talk"],
+      "meta": {}
+    },
+    {
+      "id": "itm_be92xz",
+      "type": "latex",
+      "title": "Cauchy–Riemann Şərtləri",
+      "description": "f = u + iv funksiyasının holomorf olması üçün zəruri şərt.",
+      "url": "",
+      "content": "\\frac{\\partial u}{\\partial x} = \\frac{\\partial v}{\\partial y}, \\qquad \\frac{\\partial u}{\\partial y} = -\\frac{\\partial v}{\\partial x}",
+      "date": "2026-06-20",
+      "tags": ["complex-analysis"],
+      "meta": {}
+    },
+    {
+      "id": "itm_l0k4mn",
+      "type": "link",
+      "title": "Filippov № 64: Xətti Diferensial Tənliyin Həlli",
+      "description": "A. F. Filippovun məsələlər toplusundan № 64 xətti diferensial tənliyinin inteqrallayıcı vuruq metodu ilə ətraflı həlli.",
+      "url": "https://решу.рф/математика/Филиппов/64/",
+      "content": "",
+      "date": "2026-07-11",
+      "tags": ["ode"],
+      "meta": {
+        "linkLabel": "View on Reshu.ru"
+      }
     }
   ]
 }
