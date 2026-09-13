@@ -2,7 +2,7 @@
   "meta": {
     "schemaVersion": "2.0.0",
     "siteTitle": "Anur Qoradalov — Riyaziyyat Jurnalı",
-    "updatedAt": "2026-09-13T20:40:07.993Z"
+    "updatedAt": "2026-09-13T00:00:00Z"
   },
   "problems": [
     {
@@ -13,10 +13,7 @@
       "solution_latex": "Tənlik birinci tərtib xətti qeyri-bircins diferensial tənlikdir: $$y' + p(x)y = q(x), \\qquad p(x) = \\tan x, \\quad q(x) = \\frac{1}{\\cos x}.$$ İnteqrallayıcı vuruğu tapaq: $$\\mu(x) = e^{\\int \\tan x \\, dx} = e^{-\\ln|\\cos x|} = \\frac{1}{\\cos x}.$$ Tənliyi $\\mu(x)$-ə vuraraq sol tərəfi tam törəmə şəklinə salırıq: $$\\frac{d}{dx}\\!\\left(\\frac{y}{\\cos x}\\right) = \\frac{1}{\\cos^2 x}.$$ Hər iki tərəfi inteqrallayaq: $$\\frac{y}{\\cos x} = \\tan x + C.$$ Buradan ümumi həll: $$y(x) = \\sin x + C\\cos x, \\qquad C \\in \\mathbb{R}.$$",
       "bibliography": "Filippov, A. F. — Сборник задач по дифференциальным уравнениям, задача № 64.",
       "date": "2026-07-11",
-      "tags": [
-        "ode",
-        "linear-equations"
-      ]
+      "tags": ["ode", "linear-equations"]
     }
   ],
   "stories": [
@@ -26,10 +23,7 @@
       "content": "Kakeya problemi sadə bir sualla başlayır: müstəvidə bir vahid uzunluqlu iynəni 360 dərəcə fırlatmaq üçün ən kiçik sahəli fiqur hansıdır? Cavab, ilk baxışdan gözlənildiyi kimi bir dairə deyil — Besikoviç 1920-ci illərdə sahəsi istənilən qədər kiçik ola bilən fiqurlar qura biləcəyini göstərdi. Bu qeyri-adi nəticə həndəsi ölçü nəzəriyyəsinin əsasını qoydu və indi Hong Wangın 2026-cı il Fields mükafatına səbəb olan işlə birbaşa əlaqəlidir.",
       "image": "",
       "date": "2026-08-02",
-      "tags": [
-        "geometry",
-        "pop-science"
-      ]
+      "tags": ["geometry", "pop-science"]
     }
   ],
   "code_animations": [
@@ -41,10 +35,7 @@
       "animation_url": "",
       "github_url": "https://github.com/goradalovanur-bit",
       "date": "2026-06-20",
-      "tags": [
-        "Manim",
-        "complex-analysis"
-      ]
+      "tags": ["Manim", "complex-analysis"]
     }
   ],
   "youtube": [
@@ -54,10 +45,7 @@
       "video_url": "https://youtu.be/soK-6fPr2so",
       "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
       "date": "2026-08-02",
-      "tags": [
-        "geometry",
-        "guest-talk"
-      ]
+      "tags": ["geometry", "guest-talk"]
     }
   ],
   "pdf": [
@@ -68,10 +56,7 @@
       "custom_thumbnail": "",
       "course": "Kompleks Analiz",
       "date": "2026-05-14",
-      "tags": [
-        "complex-analysis",
-        "exam-prep"
-      ]
+      "tags": ["complex-analysis", "exam-prep"]
     }
   ]
 }

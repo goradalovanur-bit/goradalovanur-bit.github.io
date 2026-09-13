@@ -13,7 +13,7 @@
   };
 
   var TYPE_LABELS = {
-    problems: 'Solved Problem', stories: 'Math Insight', code_animations: 'Code & Animation',
+    problems: 'Solved Problem', stories: 'Math Insight', code_animations: 'Codes',
     youtube: 'YouTube Video', pdf: 'PDF Document'
   };
 
