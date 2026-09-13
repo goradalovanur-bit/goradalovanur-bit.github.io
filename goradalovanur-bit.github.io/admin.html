@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Content Admin — Anur Qoradalov</title>
+
+  <!-- Immediate Theme Initialization to Prevent Screen Flashing -->
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored || (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="styles.css">
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true,
+        packages: { '[+]': ['ams', 'newcommand', 'noundefined'] }
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+
+<body>
+
+  <!-- Admin SVG Symbols -->
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>
+      </symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+      </symbol>
+      <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </symbol>
+      <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+      </symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+      </symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </symbol>
+      <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+      </symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+      </symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="admin-shell">
+    <!-- Admin Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-mark">∫</div>
+        <div>
+          <div class="admin-brand-text">Content Admin</div>
+          <div class="admin-brand-sub">GitHub Pages CMS</div>
+        </div>
+      </div>
+
+      <nav class="admin-nav" aria-label="Admin Navigation">
+        <button class="admin-nav-btn is-active" data-view="items" type="button">
+          <svg aria-hidden="true"><use href="#i-grid"/></svg>All Items
+        </button>
+        <button class="admin-nav-btn" data-view="editor" type="button">
+          <svg aria-hidden="true"><use href="#i-plus"/></svg>Add New Item
+        </button>
+        <button class="admin-nav-btn" data-view="settings" type="button">
+          <svg aria-hidden="true"><use href="#i-gear"/></svg>GitHub Settings
+        </button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" style="align-self:flex-start;">
+          <svg class="icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+
+        <div class="conn-status" id="connStatus">
+          <span class="conn-dot"></span>
+          <span id="connStatusText">Not connected</span>
+        </div>
+
+        <a class="btn" href="index.html" style="justify-content:center;">
+          <svg aria-hidden="true"><use href="#i-back"/></svg> View Site
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Admin View Area -->
+    <main class="admin-main">
+      <!-- View 1: All Items List -->
+      <section class="admin-view is-active" data-view="items">
+        <div class="admin-header">
+          <div>
+            <h2>All Items</h2>
+            <p>Everything currently in <span class="mono">data.json</span>, sorted newest first.</p>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn" id="refreshItemsBtn" type="button">
+              <svg aria-hidden="true"><use href="#i-cloud"/></svg>Reload from GitHub
+            </button>
+            <button class="btn btn-primary" id="newItemBtn" type="button">
+              <svg aria-hidden="true"><use href="#i-plus"/></svg>Add New Item
+            </button>
+          </div>
+        </div>
+
+        <div class="item-table" id="itemTable">
+          <div class="item-row item-head">
+            <div>Type</div>
+            <div>Title</div>
+            <div>Date</div>
+            <div style="text-align:right;">Actions</div>
+          </div>
+          <div id="itemRows"></div>
+        </div>
+      </section>
+
+      <!-- View 2: Add / Edit Item Editor -->
+      <section class="admin-view" data-view="editor">
+        <div class="admin-header">
+          <div>
+            <h2 id="editorHeading">Add New Item</h2>
+            <p>Select the content type and fill in the details. Changes remain local until committed.</p>
+          </div>
+        </div>
+
+        <form class="settings-card" id="itemForm" style="max-width:760px;">
+          <input type="hidden" id="f-id">
+
+          <div class="field">
+            <label for="f-type">Content Type</label>
+            <select id="f-type">
+              <option value="problem">Problem (LaTeX with Solution)</option>
+              <option value="insight">Insight (Story / Theoretical Note)</option>
+              <option value="code">Code (Manim, MATLAB, Python, C++)</option>
+              <option value="youtube">YouTube Video</option>
+              <option value="pdf">PDF Document</option>
+            </select>
+          </div>
+
+          <div class="field" id="titleField">
+            <label for="f-title">Title</label>
+            <input type="text" id="f-title" placeholder="e.g. Homogen diferensial tənlik: (x + 2y)y' = 1" required>
+          </div>
+
+          <div class="field" id="descField">
+            <label for="f-desc">Description (optional)</label>
+            <textarea id="f-desc" placeholder="Brief summary shown on feed cards" style="min-height:70px; font-family:inherit; font-size:0.9rem;"></textarea>
+          </div>
+
+          <!-- Problem Fields -->
+          <div class="type-fields" data-type-fields="problem">
+            <div class="field">
+              <label for="f-question-latex">Question LaTeX</label>
+              <textarea id="f-question-latex" placeholder="\section*{Məsələnin Şərti}\nTənliyin ümumi həllini tapın:\n\[(x + 2y)y' = 1\]" style="min-height:130px;"></textarea>
+              <p class="hint">Supports \( \), \[, \], align, equation, \section*, \subsection*.</p>
+            </div>
+            <div class="latex-preview math-doc" id="questionPreview"><span class="ph">Question preview</span></div>
+
+            <div class="field" style="margin-top:16px;">
+              <label for="f-solution-latex">Solution LaTeX</label>
+              <textarea id="f-solution-latex" placeholder="\section*{Həlli}\nİnteqrallayıcı vuruq: $\mu(y) = e^{-y}$..." style="min-height:160px;"></textarea>
+            </div>
+            <div class="latex-preview math-doc" id="solutionPreview"><span class="ph">Solution preview</span></div>
+
+            <div class="field" style="margin-top:16px;">
+              <label for="f-subject-tag">Subject Tag</label>
+              <input type="text" id="f-subject-tag" placeholder="Differential Equations, Geometry, Analysis">
+            </div>
+
+            <div class="field">
+              <label for="f-problem-pdf-url">Associated PDF Solution URL (optional)</label>
+              <input type="text" id="f-problem-pdf-url" placeholder="problems/ordinary-differential-equations/solution.pdf">
+            </div>
+          </div>
+
+          <!-- Insight Fields -->
+          <div class="type-fields" data-type-fields="insight">
+            <div class="field">
+              <label for="f-insight-content">Content (Markdown or HTML)</label>
+              <textarea id="f-insight-content" placeholder="Mətn, **qalın**, *kursiv*, riyazi düsturlar $x^2 + y^2 = 1$ və ya HTML" style="min-height:200px; font-family:inherit;"></textarea>
+            </div>
+          </div>
+
+          <!-- Code Fields -->
+          <div class="type-fields" data-type-fields="code">
+            <div class="field">
+              <label for="f-language">Language</label>
+              <input type="text" id="f-language" placeholder="Manim, MATLAB, Python, C++">
+            </div>
+            <div class="field">
+              <label for="f-code-snippet">Code Snippet</label>
+              <textarea id="f-code-snippet" placeholder="# Python / Manim / MATLAB code here" style="min-height:180px;"></textarea>
+            </div>
+            <div class="field">
+              <label for="f-video-url">Accompanying Video URL (optional)</label>
+              <input type="url" id="f-video-url" placeholder="https://youtu.be/…">
+            </div>
+          </div>
+
+          <!-- YouTube Fields -->
+          <div class="type-fields" data-type-fields="youtube">
+            <div class="field">
+              <label for="f-youtube-url">YouTube URL</label>
+              <input type="url" id="f-youtube-url" placeholder="https://youtu.be/… or https://www.youtube.com/watch?v=…">
+              <p class="hint">Thumbnails are automatically generated from YouTube (maxresdefault / hqdefault).</p>
+            </div>
+          </div>
+
+          <!-- PDF Fields -->
+          <div class="type-fields" data-type-fields="pdf">
+            <div class="field">
+              <label>PDF File Upload</label>
+              <div class="file-drop" id="pdfDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag a PDF file here</div>
+                <div class="file-name" id="pdfFileName"></div>
+              </div>
+              <input type="file" id="pdfFileInput" accept="application/pdf" hidden>
+              <p class="hint">Uploaded to <span class="mono" id="pdfAssetPathHint">assets/pdf/</span> upon GitHub commit. Or enter an existing path below.</p>
+            </div>
+            <div class="field">
+              <label for="f-pdf-url">PDF Path or URL</label>
+              <input type="text" id="f-pdf-url" placeholder="problems/geometry/my-proof.pdf">
+            </div>
+            <div class="field">
+              <label for="f-thumb-url">Custom Thumbnail URL (optional)</label>
+              <input type="text" id="f-thumb-url" placeholder="assets/thumbs/my-proof-thumb.jpg">
+            </div>
+          </div>
+
+          <!-- Common Fields (Date & Tags) -->
+          <div class="field-row" style="margin-top:18px;">
+            <div class="field">
+              <label for="f-date">Date (YYYY-MM-DD)</label>
+              <input type="date" id="f-date" required>
+            </div>
+            <div class="field">
+              <label for="f-tags-input">Tags</label>
+              <div class="tag-input-row" id="tagInputRow">
+                <input type="text" id="f-tags-input" placeholder="Type a tag, press Enter">
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="display:flex; gap:10px; margin-top:12px;">
+            <button type="submit" class="btn btn-primary">
+              <svg aria-hidden="true"><use href="#i-check"/></svg>Save to List
+            </button>
+            <button type="button" class="btn" id="cancelEditBtn">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- View 3: GitHub Settings -->
+      <section class="admin-view" data-view="settings">
+        <div class="admin-header">
+          <div>
+            <h2>GitHub Settings</h2>
+            <p>Connect a GitHub Personal Access Token to commit changes directly to your repository.</p>
+          </div>
+        </div>
+
+        <form class="settings-card" id="settingsForm">
+          <div class="field">
+            <label for="s-token">Personal Access Token</label>
+            <div class="pw-wrap">
+              <input type="password" id="s-token" placeholder="ghp_… or github_pat_…">
+              <button type="button" id="togglePw" aria-label="Show token">
+                <svg aria-hidden="true"><use href="#i-eye"/></svg>
+              </button>
+            </div>
+            <p class="hint">Fine-grained token with Contents: Read &amp; Write permissions. Saved only in your browser's localStorage.</p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="s-owner">Repository Owner</label>
+              <input type="text" id="s-owner" placeholder="goradalovanur-bit">
+            </div>
+            <div class="field">
+              <label for="s-repo">Repository Name</label>
+              <input type="text" id="s-repo" placeholder="goradalovanur-bit.github.io">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="s-branch">Branch</label>
+              <input type="text" id="s-branch" placeholder="main">
+            </div>
+            <div class="field">
+              <label for="s-datapath">Path to data.json</label>
+              <input type="text" id="s-datapath" placeholder="data.json">
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="s-assetpath">PDF Asset Folder</label>
+            <input type="text" id="s-assetpath" placeholder="assets/pdf/">
+          </div>
+
+          <div class="field" style="display:flex; gap:10px; margin-top:12px;">
+            <button type="submit" class="btn btn-primary">
+              <svg aria-hidden="true"><use href="#i-check"/></svg>Save &amp; Test Connection
+            </button>
+            <button type="button" class="btn btn-danger" id="clearTokenBtn">Clear Token</button>
+          </div>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <!-- Unsaved Changes Floating Bar -->
+  <div class="settings-card" id="commitBar" style="position:fixed; bottom:22px; left:50%; transform:translateX(-50%); display:none; z-index:150; padding:14px 20px; max-width:580px; width:calc(100% - 44px); align-items:center; gap:14px; flex-direction:row; justify-content:space-between; box-shadow:var(--shadow-hover);">
+    <span style="font-size:0.88rem; font-weight:600;" id="commitBarText">You have unsaved local changes.</span>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" id="copyPayloadBtn" type="button">
+        <svg aria-hidden="true"><use href="#i-copy"/></svg>Copy JSON
+      </button>
+      <button class="btn btn-primary" id="commitBtn" type="button">
+        <svg aria-hidden="true"><use href="#i-cloud"/></svg>Commit to GitHub
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Stack -->
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+
+</html>
