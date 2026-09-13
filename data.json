@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "schemaVersion": "1.0.0",
+    "siteTitle": "Anur Qoradalov — Digital Garden",
+    "updatedAt": "2026-09-13T00:00:00Z"
+  },
+  "items": [
+    {
+      "id": "itm_ynqk1a",
+      "type": "pdf",
+      "title": "Exam Notes — Complex Analysis",
+      "description": "Consolidated revision notes covering Cauchy's integral formula, Liouville's theorem, and residue calculus, built for the final exam.",
+      "url": "assets/pdf/complex-analysis-exam-notes.pdf",
+      "content": "",
+      "date": "2026-05-14",
+      "tags": ["complex-analysis", "exam-prep"],
+      "meta": {
+        "sourceUrl": "notes/source/complex-analysis-exam-notes.tex",
+        "sourceLabel": ".tex Code"
+      }
+    },
+    {
+      "id": "itm_r3f7pq",
+      "type": "youtube",
+      "title": "Hong Wang (Fields 2026): Kakeya Problemi və Besikoviç Ağacı",
+      "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
+      "url": "https://youtu.be/soK-6fPr2so",
+      "content": "",
+      "date": "2026-08-02",
+      "tags": ["geometry", "guest-talk"],
+      "meta": {}
+    },
+    {
+      "id": "itm_be92xz",
+      "type": "latex",
+      "title": "Cauchy–Riemann Şərtləri",
+      "description": "f = u + iv funksiyasının holomorf olması üçün zəruri şərt.",
+      "url": "",
+      "content": "\\frac{\\partial u}{\\partial x} = \\frac{\\partial v}{\\partial y}, \\qquad \\frac{\\partial u}{\\partial y} = -\\frac{\\partial v}{\\partial x}",
+      "date": "2026-06-20",
+      "tags": ["complex-analysis"],
+      "meta": {}
+    },
+    {
+      "id": "itm_l0k4mn",
+      "type": "link",
+      "title": "Filippov № 64: Xətti Diferensial Tənliyin Həlli",
+      "description": "A. F. Filippovun məsələlər toplusundan № 64 xətti diferensial tənliyinin inteqrallayıcı vuruq metodu ilə ətraflı həlli.",
+      "url": "https://решу.рф/математика/Филиппов/64/",
+      "content": "",
+      "date": "2026-07-11",
+      "tags": ["ode"],
+      "meta": {
+        "linkLabel": "View on Reshu.ru"
+      }
+    }
+  ]
+}
