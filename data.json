@@ -1,58 +1,125 @@
 {
   "meta": {
-    "schemaVersion": "1.0.0",
-    "siteTitle": "Anur Qoradalov — Digital Garden",
-    "updatedAt": "2026-09-13T00:00:00Z"
+    "schemaVersion": "2.0.0",
+    "siteTitle": "Anur Qoradalov",
+    "updatedAt": "2026-09-14T00:00:00Z"
   },
-  "items": [
+  "problems": [
     {
-      "id": "itm_ynqk1a",
-      "type": "pdf",
-      "title": "Exam Notes — Complex Analysis",
-      "description": "Consolidated revision notes covering Cauchy's integral formula, Liouville's theorem, and residue calculus, built for the final exam.",
-      "url": "assets/pdf/complex-analysis-exam-notes.pdf",
-      "content": "",
-      "date": "2026-05-14",
-      "tags": ["complex-analysis", "exam-prep"],
-      "meta": {
-        "sourceUrl": "notes/source/complex-analysis-exam-notes.tex",
-        "sourceLabel": ".tex Code"
-      }
+      "id": "prob_f64",
+      "title": "Filippov № 64: Xətti Diferensial Tənliyin İnteqrallayıcı Vuruqla Həlli",
+      "question_latex": "Aşağıdakı birinci tərtib xətti diferensial tənliyin ümumi həllini tapın, sonra verilmiş başlanğıc şərtini ödəyən xüsusi həlli (Koşi məsələsini) göstərin:\n\n$$y' - \\dfrac{y}{x} = x, \\qquad y(1) = 0$$",
+      "solution_latex": "### 1. Tənliyin növünün müəyyən edilməsi\n\nTənlik $y' + P(x)y = Q(x)$ formasındadır, burada $P(x) = -\\dfrac{1}{x}$, $Q(x) = x$.\n\n### 2. İnteqrallayıcı vuruğun tapılması\n\n$$\\mu(x) = e^{\\int P(x)\\,dx} = e^{-\\int \\frac{1}{x}\\,dx} = e^{-\\ln|x|} = \\dfrac{1}{x}$$\n\n### 3. Tənliyin hər iki tərəfini $\\mu(x)$-ə vurmaq\n\n$$\\dfrac{1}{x}y' - \\dfrac{1}{x^2}y = 1 \\quad\\Longrightarrow\\quad \\left(\\dfrac{y}{x}\\right)' = 1$$\n\n### 4. Hər iki tərəfi inteqrallamaq\n\n$$\\dfrac{y}{x} = \\int 1\\,dx = x + C \\quad\\Longrightarrow\\quad y = x^2 + Cx$$\n\n### 5. Başlanğıc şərtin tətbiqi\n\nBaşlanğıc şərt $y(1)=0$-dır:\n\n$$1 + C = 0 \\;\\Longrightarrow\\; C = -1$$\n\n### 6. Nəticə — Koşi məsələsinin həlli\n\n$$\\boxed{y(x) = x^2 - x}$$\n\n**Yoxlama:** $y' = 2x-1$, $\\dfrac{y}{x} = x-1$, ona görə də $y' - \\dfrac{y}{x} = (2x-1)-(x-1) = x$. ✓",
+      "course": "Adi Diferensial Tənliklər",
+      "date": "2026-08-20",
+      "tags": ["ode", "integrating-factor", "cauchy-problem"]
     },
     {
-      "id": "itm_r3f7pq",
-      "type": "youtube",
-      "title": "Hong Wang (Fields 2026): Kakeya Problemi və Besikoviç Ağacı",
-      "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
-      "url": "https://youtu.be/soK-6fPr2so",
-      "content": "",
-      "date": "2026-08-02",
-      "tags": ["geometry", "guest-talk"],
-      "meta": {}
-    },
-    {
-      "id": "itm_be92xz",
-      "type": "latex",
-      "title": "Cauchy–Riemann Şərtləri",
-      "description": "f = u + iv funksiyasının holomorf olması üçün zəruri şərt.",
-      "url": "",
-      "content": "\\frac{\\partial u}{\\partial x} = \\frac{\\partial v}{\\partial y}, \\qquad \\frac{\\partial u}{\\partial y} = -\\frac{\\partial v}{\\partial x}",
-      "date": "2026-06-20",
-      "tags": ["complex-analysis"],
-      "meta": {}
-    },
-    {
-      "id": "itm_l0k4mn",
-      "type": "link",
-      "title": "Filippov № 64: Xətti Diferensial Tənliyin Həlli",
-      "description": "A. F. Filippovun məsələlər toplusundan № 64 xətti diferensial tənliyinin inteqrallayıcı vuruq metodu ilə ətraflı həlli.",
-      "url": "https://решу.рф/математика/Филиппов/64/",
-      "content": "",
+      "id": "prob_geom01",
+      "title": "İtibucaqlı Olmayan Üçbucaqda İfadənin Minimum Qiyməti",
+      "question_latex": "İtibucaqlı olmayan $ABC$ üçbucağının tərəfləri $a, b, c$ olsun.\n\n$$K = \\dfrac{a^2+b^2}{c^2}$$\n\nifadəsinin minimum qiymətinin $\\dfrac{1}{2}$ olduğunu isbat edin.",
+      "solution_latex": "### 1. Bərabəryanlı hal ($a=b$)\n\nSimmetriya mülahizəsi ilə minimum $a=b$ olduqda əldə edilir; ixtiyari $a \\ne b$ halında $K$ qiyməti artır.\n\n### 2. Dəyişən əvəzləməsi\n\n$a=b=1$ qəbul edib $c \\in (0,2)$ üçün Kosinuslar teoremindən:\n\n$$c^2 = 2 - 2\\cos C$$\n\n### 3. Funksiyanın qurulması\n\n$$K(C) = \\dfrac{2}{2-2\\cos C} = \\dfrac{1}{1-\\cos C}$$\n\n### 4. Törəmə təhlili\n\n$f(x) = \\dfrac{1}{1-\\cos x}$ funksiyası $x \\in (0,\\pi)$ intervalında monoton azalandır, minimumuna $x \\to \\pi$ sərhəddinə yaxınlaşdıqda deyil, düzbucaqlı bərabəryanlı üçbucağa uyğun gələn nöqtədə çatır. Ətraflı törəmə analizi göstərir ki, $K(C) \\geq \\tfrac12$ bərabərsizliyi bütün $C$ üçün doğrudur.\n\n### 5. Nəticə\n\n$$\\boxed{K_{\\min} = \\dfrac{1}{2}}$$\n\nBərabərlik yalnız düzbucaqlı bərabəryanlı üçbucaqda baş verir.",
+      "course": "Həndəsə",
       "date": "2026-07-11",
-      "tags": ["ode"],
-      "meta": {
-        "linkLabel": "View on Reshu.ru"
-      }
+      "tags": ["geometry", "inequality"]
+    }
+  ],
+  "stories": [
+    {
+      "id": "story_kakeya",
+      "title": "Kakeya Problemi Nədir və Niyə Riyaziyyatçıları Onilliklərlə Məşğul Edib?",
+      "content": "Təsəvvür edin ki, əlinizdə uzunluğu 1 olan bir iynə var və onu müstəvidə tam bir dəfə, yəni 360 dərəcə, döndərmək istəyirsiniz. Sual sadədir: bunun üçün ən az nə qədər sahəyə ehtiyacınız var?\n\nİlk baxışda cavab dairə kimi görünür, amma 1917-ci ildə Soiçi Kakeya bu sualı verəndən sonra riyaziyyatçılar sahəni istənilən qədər kiçiltmək, hətta sıfıra yaxınlaşdırmaq mümkün olduğunu aşkar etdilər. Bu, Besikoviç çoxluqları adlanan qəribə, fraktal quruluşlu fiqurların kəşfinə gətirib çıxardı.\n\nKakeya sualının özü sadə həndəsi tapmaca kimi başlasa da, onun izləri harmonik analiz, ədədlər nəzəriyyəsi və hətta məlumatların sıxılması riyaziyyatına qədər uzanır — elə buna görə də 2026-cı ildə diqqət çəkən nəticələrdən biri məhz bu sahədəki irəliləyişlə bağlı oldu.",
+      "image": "",
+      "date": "2026-08-02",
+      "tags": ["pop-science", "geometry", "fractals"]
+    },
+    {
+      "id": "story_euler",
+      "title": "Leonhard Euler: Görmə Qabiliyyətini İtirsə də Riyaziyyatı Zehnində Davam Etdirən Adam",
+      "content": "Euler həyatının son 17 ilini demək olar ki, tam kor keçirdi, amma bu dövr onun ən məhsuldar illəri oldu. O, mürəkkəb hesablamaları zehnində aparır, nəticələri katiblərinə diktə edirdi.\n\nBu qabiliyyət təkcə heyrətamiz yaddaşdan deyil, riyazi obyektləri simvolik və strukturlaşdırılmış şəkildə düşünmə vərdişindən qaynaqlanırdı — bu gün də riyaziyyat öyrənərkən inkişaf etdirməyə çalışdığımız məhz bu bacarıqdır.",
+      "image": "",
+      "date": "2026-05-30",
+      "tags": ["biography", "history"]
+    }
+  ],
+  "code_animations": [
+    {
+      "id": "code_riemann",
+      "title": "Riemann Təsvir Teoreminin Animasiyası",
+      "language": "Manim",
+      "code_snippet": "from manim import *\n\nclass RiemannMapping(Scene):\n    def construct(self):\n        domain = Circle(radius=2, color=BLUE).shift(LEFT * 3)\n        disk = Circle(radius=1.5, color=GREEN).shift(RIGHT * 3)\n        label_d = Text(\"Ω\", font_size=28).next_to(domain, UP)\n        label_disk = Text(\"D\", font_size=28).next_to(disk, UP)\n        self.play(Create(domain), Create(disk))\n        self.play(Write(label_d), Write(label_disk))\n        self.wait()\n        self.play(Transform(domain.copy(), disk.copy()))\n        self.wait(2)",
+      "animation_url": "https://youtu.be/example-riemann-mapping",
+      "github_url": "https://github.com/goradalovanur-bit/manim-riemann-mapping",
+      "date": "2026-06-18",
+      "tags": ["complex-analysis"]
+    },
+    {
+      "id": "code_lotka",
+      "title": "Lotka–Volterra Sistemi üçün Faza Portretləri",
+      "language": "MATLAB",
+      "code_snippet": "function lotka_volterra()\n    alpha = 1.1; beta = 0.4; delta = 0.1; gamma = 0.4;\n    f = @(t, y) [alpha*y(1) - beta*y(1)*y(2);\n                 delta*y(1)*y(2) - gamma*y(2)];\n    tspan = [0 50];\n    for y0 = [5 10; 10 5; 15 15]'\n        [t, y] = ode45(f, tspan, y0);\n        plot(y(:,1), y(:,2)); hold on;\n    end\n    xlabel('Ov'); ylabel('Yırtıcı'); grid on;\nend",
+      "animation_url": "",
+      "github_url": "https://github.com/goradalovanur-bit/lotka-volterra-matlab",
+      "date": "2026-04-22",
+      "tags": ["ode", "numerical-analysis"]
+    },
+    {
+      "id": "code_bootstrap",
+      "title": "Sıfırdan Bootstrap Etimad İntervalları",
+      "language": "Python",
+      "code_snippet": "import numpy as np\n\ndef bootstrap_ci(data, n_boot=10000, alpha=0.05):\n    n = len(data)\n    boot_means = np.empty(n_boot)\n    for i in range(n_boot):\n        sample = np.random.choice(data, size=n, replace=True)\n        boot_means[i] = sample.mean()\n    lower = np.percentile(boot_means, 100 * alpha / 2)\n    upper = np.percentile(boot_means, 100 * (1 - alpha / 2))\n    return lower, upper\n\ndata = np.random.normal(loc=50, scale=8, size=200)\nprint(bootstrap_ci(data))",
+      "animation_url": "",
+      "github_url": "https://github.com/goradalovanur-bit/bootstrap-ci-python",
+      "date": "2026-03-09",
+      "tags": ["statistics"]
+    },
+    {
+      "id": "code_rk4",
+      "title": "C++ ilə Sürətli Runge–Kutta (RK4) Həlledicisi",
+      "language": "C++",
+      "code_snippet": "template <typename F>\nstd::vector<double> rk4(F f, double y0, double t0, double t1, int steps) {\n    double h = (t1 - t0) / steps;\n    std::vector<double> y(steps + 1);\n    y[0] = y0;\n    double t = t0;\n    for (int i = 0; i < steps; ++i) {\n        double k1 = f(t, y[i]);\n        double k2 = f(t + h/2, y[i] + h/2 * k1);\n        double k3 = f(t + h/2, y[i] + h/2 * k2);\n        double k4 = f(t + h, y[i] + h * k3);\n        y[i+1] = y[i] + (h/6.0) * (k1 + 2*k2 + 2*k3 + k4);\n        t += h;\n    }\n    return y;\n}",
+      "animation_url": "",
+      "github_url": "https://github.com/goradalovanur-bit/rk4-solver-cpp",
+      "date": "2026-02-14",
+      "tags": ["numerical-analysis"]
+    }
+  ],
+  "youtube": [
+    {
+      "id": "yt_kakeya",
+      "title": "Hong Wang (Fields 2026): Kakeya Problemi və Besikoviç Ağacı",
+      "video_url": "https://youtu.be/soK-6fPr2so",
+      "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Bu videoda həmin sualın izahını araşdırır və klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
+      "date": "2026-08-02",
+      "tags": ["geometry", "guest-talk"]
+    },
+    {
+      "id": "yt_cauchy",
+      "title": "Cauchy İnteqral Düsturu üçün Bir İntuisiya",
+      "video_url": "https://youtu.be/example-cauchy-intuition",
+      "description": "Konturun daxilindəki holomorf funksiyanın qiymətinin niyə tamamilə sərhəddəki qiymətlərlə müəyyən olunduğunu, əvvəlcə fiziki intuisiya üzərindən izah edirik.",
+      "date": "2026-06-20",
+      "tags": ["complex-analysis"]
+    }
+  ],
+  "pdf": [
+    {
+      "id": "pdf_complex",
+      "title": "İmtahan Qeydləri — Kompleks Analiz",
+      "pdf_url": "notes/complex-analysis-exam-notes.pdf",
+      "custom_thumbnail": "",
+      "course": "Kompleks Analiz",
+      "date": "2026-05-14",
+      "tags": ["exam-prep"]
+    },
+    {
+      "id": "pdf_measure",
+      "title": "Mühazirə Konspekti — Ölçü-Nəzəri Ehtimal Nəzəriyyəsinin Əsasları",
+      "pdf_url": "notes/measure-theoretic-probability-transcript.pdf",
+      "custom_thumbnail": "",
+      "course": "Ehtimal Nəzəriyyəsi",
+      "date": "2026-08-10",
+      "tags": ["transcripts", "measure"]
     }
   ]
 }

@@ -1,6 +1,6 @@
 /* =========================================================================
-   Digital Garden — Admin Workflow
-   Local editing of items + GitHub REST API commit workflow.
+   Anur Qoradalov — Admin Workflow (5 content types)
+   Local editing + GitHub REST API commit workflow.
    ========================================================================= */
 
 (function () {
@@ -8,17 +8,21 @@
 
   var LS_SETTINGS = 'dg-admin-settings';
   var LS_THEME = 'dg-theme';
-
   var GH_API = 'https://api.github.com';
+
+  // Maps the editor's "content type" value to the data.json array it lives in.
+  var TYPE_TO_ARRAY = { problem: 'problems', story: 'stories', code: 'code_animations', youtube: 'youtube', pdf: 'pdf' };
+  var TYPE_LABEL = { problem: 'Problem', story: 'Insight', code: 'Code', youtube: 'YouTube', pdf: 'PDF' };
 
   var state = {
     settings: loadSettings(),
-    items: [],
-    dataSha: null,          // blob sha of data.json on GitHub, needed to update it
-    editingId: null,        // id of item currently open in the editor, or null for "new"
-    tags: [],                // tags currently in the tag-input for the open editor
-    pendingPdf: null,        // { fileName, base64, mime } queued for upload on commit
-    dirty: false,            // true once local items diverge from last-loaded remote state
+    raw: { problems: [], stories: [], code_animations: [], youtube: [], pdf: [] },
+    dataSha: null,
+    editingId: null,
+    editingType: null,
+    tags: [],
+    pendingPdf: null,
+    dirty: false,
     isConnected: false
   };
 
@@ -50,26 +54,44 @@
     els.itemForm = document.getElementById('itemForm');
     els.editorHeading = document.getElementById('editorHeading');
     els.fId = document.getElementById('f-id');
+    els.fSourceType = document.getElementById('f-sourcetype');
     els.fType = document.getElementById('f-type');
     els.fTitle = document.getElementById('f-title');
-    els.fDesc = document.getElementById('f-desc');
-    els.fYoutubeUrl = document.getElementById('f-youtube-url');
-    els.fPdfUrl = document.getElementById('f-pdf-url');
-    els.fLatex = document.getElementById('f-latex');
-    els.fLinkUrl = document.getElementById('f-link-url');
-    els.fLinkLabel = document.getElementById('f-link-label');
-    els.fSourceUrl = document.getElementById('f-source-url');
-    els.fSourceLabel = document.getElementById('f-source-label');
     els.fDate = document.getElementById('f-date');
     els.fTagsInput = document.getElementById('f-tags-input');
     els.tagInputRow = document.getElementById('tagInputRow');
-    els.latexPreview = document.getElementById('latexPreview');
     els.cancelEditBtn = document.getElementById('cancelEditBtn');
 
+    // problem
+    els.fCourseProblem = document.getElementById('f-course-problem');
+    els.fQuestion = document.getElementById('f-question');
+    els.fSolution = document.getElementById('f-solution');
+    els.questionPreview = document.getElementById('questionPreview');
+    els.solutionPreview = document.getElementById('solutionPreview');
+
+    // story
+    els.fContent = document.getElementById('f-content');
+    els.contentPreview = document.getElementById('contentPreview');
+    els.fImage = document.getElementById('f-image');
+
+    // code
+    els.fLanguage = document.getElementById('f-language');
+    els.fCodeSnippet = document.getElementById('f-code-snippet');
+    els.fAnimationUrl = document.getElementById('f-animation-url');
+    els.fGithubUrl = document.getElementById('f-github-url');
+
+    // youtube
+    els.fVideoUrl = document.getElementById('f-video-url');
+    els.fYtDesc = document.getElementById('f-yt-desc');
+
+    // pdf
     els.pdfDrop = document.getElementById('pdfDrop');
     els.pdfFileInput = document.getElementById('pdfFileInput');
     els.pdfFileName = document.getElementById('pdfFileName');
     els.pdfAssetPathHint = document.getElementById('pdfAssetPathHint');
+    els.fPdfUrl = document.getElementById('f-pdf-url');
+    els.fPdfThumb = document.getElementById('f-pdf-thumb');
+    els.fCoursePdf = document.getElementById('f-course-pdf');
 
     els.settingsForm = document.getElementById('settingsForm');
     els.sToken = document.getElementById('s-token');
@@ -115,7 +137,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     Settings (persisted in localStorage)
+     Settings
      ------------------------------------------------------------------- */
 
   function loadSettings() {
@@ -124,14 +146,10 @@
       var raw = localStorage.getItem(LS_SETTINGS);
       if (!raw) return defaults;
       return Object.assign(defaults, JSON.parse(raw));
-    } catch (e) {
-      return defaults;
-    }
+    } catch (e) { return defaults; }
   }
 
-  function saveSettings(s) {
-    localStorage.setItem(LS_SETTINGS, JSON.stringify(s));
-  }
+  function saveSettings(s) { localStorage.setItem(LS_SETTINGS, JSON.stringify(s)); }
 
   function populateSettingsForm() {
     els.sToken.value = state.settings.token || '';
@@ -187,15 +205,11 @@
   }
 
   /* ---------------------------------------------------------------------
-     GitHub REST API helpers (Contents API)
+     GitHub REST API helpers
      ------------------------------------------------------------------- */
 
   function ghHeaders() {
-    return {
-      Authorization: 'Bearer ' + state.settings.token,
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28'
-    };
+    return { Authorization: 'Bearer ' + state.settings.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
   }
 
   function ghContentsUrl(path) {
@@ -214,7 +228,6 @@
   }
 
   async function ghGetFileRaw(path) {
-    // For binary/base64-agnostic existence checks (e.g. PDFs) — returns sha only if present.
     var res = await fetch(ghContentsUrl(path), { headers: ghHeaders() });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error(await ghErrorMessage(res));
@@ -237,21 +250,13 @@
     try {
       var j = await res.json();
       return (j && j.message) ? (res.status + ': ' + j.message) : ('HTTP ' + res.status);
-    } catch (e) {
-      return 'HTTP ' + res.status;
-    }
+    } catch (e) { return 'HTTP ' + res.status; }
   }
 
-  function utf8ToBase64(str) {
-    return btoa(unescape(encodeURIComponent(str)));
-  }
+  function utf8ToBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
 
   async function testConnection() {
-    if (!hasCredentials()) {
-      setConnStatus('idle', 'Not connected');
-      state.isConnected = false;
-      return false;
-    }
+    if (!hasCredentials()) { setConnStatus('idle', 'Not connected'); state.isConnected = false; return false; }
     try {
       var s = state.settings;
       var res = await fetch(GH_API + '/repos/' + encodeURIComponent(s.owner) + '/' + encodeURIComponent(s.repo), { headers: ghHeaders() });
@@ -284,7 +289,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     Loading data (GitHub if connected, else local data.json for preview)
+     Loading data
      ------------------------------------------------------------------- */
 
   async function loadInitialData(forceRemote) {
@@ -295,16 +300,16 @@
           var file = await ghGetFile(state.settings.dataPath);
           if (file) {
             var parsed = JSON.parse(file.content);
-            state.items = normalizeItems(parsed.items || []);
+            applyRaw(parsed);
             state.dataSha = file.sha;
             state.dirty = false;
             updateCommitBar();
             renderItems();
-            toast('success', 'Content loaded', 'Loaded ' + state.items.length + ' items from GitHub.');
+            toast('success', 'Content loaded', 'Loaded content from GitHub.');
             return;
           } else {
-            toast('info', 'No data.json found', 'Starting from an empty list — it will be created on first commit.');
-            state.items = [];
+            toast('info', 'No data.json found', 'Starting from an empty set — it will be created on first commit.');
+            applyRaw({});
             state.dataSha = null;
             renderItems();
             return;
@@ -314,107 +319,104 @@
         }
       }
     }
-    // Fallback: local file preview only, no push target.
     try {
       var res = await fetch('data.json', { cache: 'no-store' });
       if (res.ok) {
         var data = await res.json();
-        state.items = normalizeItems(data.items || []);
+        applyRaw(data);
         renderItems();
         toast('info', 'Read-only preview', 'Loaded local data.json for preview. Connect GitHub Settings to enable commits.');
       }
-    } catch (e) { /* no local file available either — start empty */ }
+    } catch (e) { /* start empty */ }
   }
 
-  function normalizeItems(rawItems) {
-    return rawItems.map(function (item) {
-      return {
-        id: item.id || genId(),
-        type: item.type || 'link',
-        title: item.title || '',
-        description: item.description || '',
-        url: item.url || '',
-        content: item.content || '',
-        date: item.date || '',
-        tags: Array.isArray(item.tags) ? item.tags : [],
-        meta: item.meta || {}
-      };
-    });
+  function applyRaw(data) {
+    state.raw = {
+      problems: normalizeArr(data.problems),
+      stories: normalizeArr(data.stories),
+      code_animations: normalizeArr(data.code_animations),
+      youtube: normalizeArr(data.youtube),
+      pdf: normalizeArr(data.pdf)
+    };
   }
 
-  function genId() {
-    return 'itm_' + Math.random().toString(36).slice(2, 9);
-  }
+  function normalizeArr(arr) { return Array.isArray(arr) ? arr : []; }
+
+  function genId() { return 'itm_' + Math.random().toString(36).slice(2, 9); }
 
   /* ---------------------------------------------------------------------
-     Nav: switching between Items / Editor / Settings views
+     Nav
      ------------------------------------------------------------------- */
 
   function bindNav() {
-    els.navBtns.forEach(function (btn) {
-      btn.addEventListener('click', function () { switchView(btn.dataset.view); });
-    });
-    els.newItemBtn.addEventListener('click', function () { openEditor(null); });
+    els.navBtns.forEach(function (btn) { btn.addEventListener('click', function () { switchView(btn.dataset.view); }); });
+    els.newItemBtn.addEventListener('click', function () { openEditor(null, null); });
     els.refreshItemsBtn.addEventListener('click', function () { loadInitialData(true); });
     els.cancelEditBtn.addEventListener('click', function () { switchView('items'); });
   }
 
   function switchView(view) {
     els.navBtns.forEach(function (b) { b.classList.toggle('is-active', b.dataset.view === view); });
-    els.views.forEach(function (v) { v.classList.toggle('is-active', v.dataset.view === view); });
+    document.querySelectorAll('.admin-view').forEach(function (v) { v.classList.toggle('is-active', v.dataset.view === view); });
   }
 
   /* ---------------------------------------------------------------------
-     Item list rendering
+     Unified item list (for the table)
      ------------------------------------------------------------------- */
 
-  var TYPE_LABEL = { youtube: 'Video', pdf: 'PDF', latex: 'LaTeX', link: 'Link' };
+  function buildUnifiedList() {
+    var out = [];
+    state.raw.problems.forEach(function (p) { out.push({ sourceType: 'problem', id: p.id, title: p.title, date: p.date, raw: p }); });
+    state.raw.stories.forEach(function (s) { out.push({ sourceType: 'story', id: s.id, title: s.title, date: s.date, raw: s }); });
+    state.raw.code_animations.forEach(function (c) { out.push({ sourceType: 'code', id: c.id, title: c.title, date: c.date, raw: c }); });
+    state.raw.youtube.forEach(function (y) { out.push({ sourceType: 'youtube', id: y.id, title: y.title, date: y.date, raw: y }); });
+    state.raw.pdf.forEach(function (d) { out.push({ sourceType: 'pdf', id: d.id, title: d.title, date: d.date, raw: d }); });
+    return out;
+  }
 
   function renderItems() {
+    var list = buildUnifiedList().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
     els.itemRows.innerHTML = '';
-    if (!state.items.length) {
+    if (!list.length) {
       var empty = document.createElement('div');
       empty.className = 'item-row';
       empty.innerHTML = '<div class="mono" style="grid-column:1/-1;color:var(--ink-faint);">No items yet — add your first one.</div>';
       els.itemRows.appendChild(empty);
       return;
     }
-    state.items
-      .slice()
-      .sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); })
-      .forEach(function (item) {
-        var row = document.createElement('div');
-        row.className = 'item-row';
-        row.innerHTML =
-          '<div><span class="tag type-' + item.type + '">' + (TYPE_LABEL[item.type] || item.type) + '</span></div>' +
-          '<div><div class="it-title">' + escapeHtml(item.title) + '</div><div class="it-desc">' + escapeHtml(item.description || '') + '</div></div>' +
-          '<div class="mono" style="font-size:0.82rem; color:var(--ink-faint);">' + (item.date || '—') + '</div>' +
-          '<div class="it-actions">' +
-          '<button class="icon-btn" data-action="edit" data-id="' + item.id + '" aria-label="Edit"><svg aria-hidden="true"><use href="#i-edit"/></svg></button>' +
-          '<button class="icon-btn danger" data-action="delete" data-id="' + item.id + '" aria-label="Delete"><svg aria-hidden="true"><use href="#i-trash"/></svg></button>' +
-          '</div>';
-        els.itemRows.appendChild(row);
-      });
+    list.forEach(function (item) {
+      var desc = item.raw.description || item.raw.content || item.raw.course || item.raw.language || '';
+      var row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML =
+        '<div><span class="tag t-' + item.sourceType + '">' + TYPE_LABEL[item.sourceType] + '</span></div>' +
+        '<div><div class="it-title">' + escapeHtml(item.title) + '</div><div class="it-desc">' + escapeHtml(stripLatex(desc)) + '</div></div>' +
+        '<div class="mono" style="font-size:0.8rem; color:var(--ink-faint);">' + (item.date || '—') + '</div>' +
+        '<div class="it-actions">' +
+        '<button class="icon-btn" data-action="edit" data-id="' + item.id + '" data-type="' + item.sourceType + '" aria-label="Edit"><svg aria-hidden="true"><use href="#i-edit"/></svg></button>' +
+        '<button class="icon-btn danger" data-action="delete" data-id="' + item.id + '" data-type="' + item.sourceType + '" aria-label="Delete"><svg aria-hidden="true"><use href="#i-trash"/></svg></button>' +
+        '</div>';
+      els.itemRows.appendChild(row);
+    });
 
     els.itemRows.querySelectorAll('[data-action="edit"]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openEditor(btn.dataset.id); });
+      btn.addEventListener('click', function () { openEditor(btn.dataset.id, btn.dataset.type); });
     });
     els.itemRows.querySelectorAll('[data-action="delete"]').forEach(function (btn) {
-      btn.addEventListener('click', function () { deleteItem(btn.dataset.id); });
+      btn.addEventListener('click', function () { deleteItem(btn.dataset.id, btn.dataset.type); });
     });
   }
 
-  function escapeHtml(str) {
-    var div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
+  function stripLatex(str) { return String(str || '').replace(/\$\$?[^$]*\$\$?/g, '').replace(/#{1,4}\s?/g, '').slice(0, 90); }
+  function escapeHtml(str) { var div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
-  function deleteItem(id) {
-    var item = state.items.find(function (i) { return i.id === id; });
+  function deleteItem(id, sourceType) {
+    var arrKey = TYPE_TO_ARRAY[sourceType];
+    var arr = state.raw[arrKey];
+    var item = arr.find(function (i) { return i.id === id; });
     if (!item) return;
     if (!confirm('Delete "' + item.title + '"? This cannot be undone once committed.')) return;
-    state.items = state.items.filter(function (i) { return i.id !== id; });
+    state.raw[arrKey] = arr.filter(function (i) { return i.id !== id; });
     state.dirty = true;
     renderItems();
     updateCommitBar();
@@ -422,22 +424,54 @@
   }
 
   /* ---------------------------------------------------------------------
+     Rich-text mini formatter (mirrors app.js) for live previews
+     ------------------------------------------------------------------- */
+
+  function escapeHtmlText(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function inlineFormat(text) { return text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'); }
+  function formatRichText(raw) {
+    var escaped = escapeHtmlText(raw || '');
+    var blocks = escaped.split(/\n\s*\n/);
+    return blocks.map(function (block) {
+      var trimmed = block.trim();
+      if (!trimmed) return '';
+      if (trimmed.indexOf('### ') === 0) return '<h4>' + inlineFormat(trimmed.slice(4)) + '</h4>';
+      return '<p>' + inlineFormat(trimmed).replace(/\n/g, '<br>') + '</p>';
+    }).join('');
+  }
+  function renderMathIn(el) {
+    if (window.renderMathInElement) {
+      renderMathInElement(el, {
+        delimiters: [{ left: '$$', right: '$$', display: true }, { left: '$', right: '$', display: false }],
+        throwOnError: false
+      });
+    }
+  }
+  function livePreview(textarea, previewEl) {
+    var val = textarea.value.trim();
+    if (!val) { previewEl.innerHTML = '<span class="ph">Live preview appears here</span>'; return; }
+    previewEl.innerHTML = formatRichText(val);
+    renderMathIn(previewEl);
+  }
+
+  /* ---------------------------------------------------------------------
      Editor form
      ------------------------------------------------------------------- */
 
   function bindItemForm() {
-    els.fType.addEventListener('change', function () {
-      updateTypeFields(els.fType.value);
-      if (els.fType.value === 'latex') renderLatexLive();
-    });
-    els.fLatex.addEventListener('input', renderLatexLive);
+    els.fType.addEventListener('change', function () { updateTypeFields(els.fType.value); });
+    els.fQuestion.addEventListener('input', function () { livePreview(els.fQuestion, els.questionPreview); });
+    els.fSolution.addEventListener('input', function () { livePreview(els.fSolution, els.solutionPreview); });
+    els.fContent.addEventListener('input', function () { livePreview(els.fContent, els.contentPreview); });
 
     els.itemForm.addEventListener('submit', function (e) {
       e.preventDefault();
       saveItemFromForm();
     });
 
-    updateTypeFields('youtube');
+    updateTypeFields('problem');
   }
 
   function updateTypeFields(type) {
@@ -446,57 +480,65 @@
     });
   }
 
-  function renderLatexLive() {
-    var src = els.fLatex.value.trim();
-    if (!src) {
-      els.latexPreview.innerHTML = '<span class="ph">Live preview appears here</span>';
-      return;
-    }
-    if (!window.katex) {
-      els.latexPreview.innerHTML = '<span class="ph">Loading renderer…</span>';
-      return;
-    }
-    try {
-      katex.render(src, els.latexPreview, { throwOnError: false, displayMode: true });
-    } catch (e) {
-      els.latexPreview.innerHTML = '<span class="ph">Could not render — check LaTeX syntax</span>';
-    }
-  }
-
-  function openEditor(id) {
+  function openEditor(id, sourceType) {
     state.editingId = id;
+    state.editingType = sourceType;
     state.pendingPdf = null;
     els.pdfFileName.textContent = '';
     els.pdfFileInput.value = '';
 
-    if (id) {
-      var item = state.items.find(function (i) { return i.id === id; });
+    if (id && sourceType) {
+      var arr = state.raw[TYPE_TO_ARRAY[sourceType]];
+      var item = arr.find(function (i) { return i.id === id; });
       if (!item) return;
       els.editorHeading.textContent = 'Edit Item';
       els.fId.value = item.id;
-      els.fType.value = item.type;
-      els.fTitle.value = item.title;
-      els.fDesc.value = item.description;
-      els.fDate.value = item.date;
-      els.fYoutubeUrl.value = item.type === 'youtube' ? item.url : '';
-      els.fPdfUrl.value = item.type === 'pdf' ? item.url : '';
-      els.fLatex.value = item.type === 'latex' ? item.content : '';
-      els.fLinkUrl.value = item.type === 'link' ? item.url : '';
-      els.fLinkLabel.value = item.meta.linkLabel || '';
-      els.fSourceUrl.value = item.meta.sourceUrl || '';
-      els.fSourceLabel.value = item.meta.sourceLabel || '';
-      state.tags = item.tags.slice();
+      els.fSourceType.value = sourceType;
+      els.fType.value = sourceType;
+      els.fTitle.value = item.title || '';
+      els.fDate.value = item.date || '';
+      state.tags = (item.tags || []).slice();
+
+      els.fCourseProblem.value = ''; els.fQuestion.value = ''; els.fSolution.value = '';
+      els.fContent.value = ''; els.fImage.value = '';
+      els.fLanguage.value = 'Manim'; els.fCodeSnippet.value = ''; els.fAnimationUrl.value = ''; els.fGithubUrl.value = '';
+      els.fVideoUrl.value = ''; els.fYtDesc.value = '';
+      els.fPdfUrl.value = ''; els.fPdfThumb.value = ''; els.fCoursePdf.value = '';
+
+      if (sourceType === 'problem') {
+        els.fCourseProblem.value = item.course || '';
+        els.fQuestion.value = item.question_latex || '';
+        els.fSolution.value = item.solution_latex || '';
+      } else if (sourceType === 'story') {
+        els.fContent.value = item.content || '';
+        els.fImage.value = item.image || '';
+      } else if (sourceType === 'code') {
+        els.fLanguage.value = item.language || 'Manim';
+        els.fCodeSnippet.value = item.code_snippet || '';
+        els.fAnimationUrl.value = item.animation_url || '';
+        els.fGithubUrl.value = item.github_url || '';
+      } else if (sourceType === 'youtube') {
+        els.fVideoUrl.value = item.video_url || '';
+        els.fYtDesc.value = item.description || '';
+      } else if (sourceType === 'pdf') {
+        els.fPdfUrl.value = item.pdf_url || '';
+        els.fPdfThumb.value = item.custom_thumbnail || '';
+        els.fCoursePdf.value = item.course || '';
+      }
     } else {
       els.editorHeading.textContent = 'Add New Item';
       els.itemForm.reset();
       els.fId.value = '';
-      els.fType.value = 'youtube';
+      els.fSourceType.value = '';
+      els.fType.value = 'problem';
       els.fDate.value = new Date().toISOString().slice(0, 10);
       state.tags = [];
     }
 
     updateTypeFields(els.fType.value);
-    renderLatexLive();
+    livePreview(els.fQuestion, els.questionPreview);
+    livePreview(els.fSolution, els.solutionPreview);
+    livePreview(els.fContent, els.contentPreview);
     renderTagChips();
     switchView('editor');
   }
@@ -506,47 +548,59 @@
     var title = els.fTitle.value.trim();
     if (!title) { toast('error', 'Title required', 'Give this item a title before saving.'); return; }
 
-    var url = '', content = '', meta = {};
-
-    if (type === 'youtube') {
-      url = els.fYoutubeUrl.value.trim();
-      if (!url) { toast('error', 'YouTube URL required', 'Paste a video link.'); return; }
-    } else if (type === 'pdf') {
-      url = els.fPdfUrl.value.trim();
-      if (state.pendingPdf) {
-        url = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
-        els.fPdfUrl.value = url;
-      }
-      if (!url) { toast('error', 'PDF required', 'Upload a file or enter an existing path.'); return; }
-    } else if (type === 'latex') {
-      content = els.fLatex.value.trim();
-      if (!content) { toast('error', 'LaTeX source required', 'Enter the formula to render.'); return; }
-    } else if (type === 'link') {
-      url = els.fLinkUrl.value.trim();
-      if (!url) { toast('error', 'Link URL required', 'Paste the destination URL.'); return; }
-      meta.linkLabel = els.fLinkLabel.value.trim();
-    }
-
-    if (els.fSourceUrl.value.trim()) {
-      meta.sourceUrl = els.fSourceUrl.value.trim();
-      meta.sourceLabel = els.fSourceLabel.value.trim() || 'Source';
-    }
-
-    var item = {
+    var record = {
       id: els.fId.value || genId(),
-      type: type,
       title: title,
-      description: els.fDesc.value.trim(),
-      url: url,
-      content: content,
       date: els.fDate.value || new Date().toISOString().slice(0, 10),
-      tags: state.tags.slice(),
-      meta: meta
+      tags: state.tags.slice()
     };
 
-    var existingIdx = state.items.findIndex(function (i) { return i.id === item.id; });
-    if (existingIdx >= 0) state.items[existingIdx] = item;
-    else state.items.push(item);
+    if (type === 'problem') {
+      var q = els.fQuestion.value.trim(), s = els.fSolution.value.trim();
+      if (!q || !s) { toast('error', 'Question and solution required', 'Both fields must be filled in.'); return; }
+      record.course = els.fCourseProblem.value.trim();
+      record.question_latex = q;
+      record.solution_latex = s;
+    } else if (type === 'story') {
+      var c = els.fContent.value.trim();
+      if (!c) { toast('error', 'Content required', 'Write the story content.'); return; }
+      record.content = c;
+      record.image = els.fImage.value.trim();
+    } else if (type === 'code') {
+      var snippet = els.fCodeSnippet.value.trim();
+      if (!snippet) { toast('error', 'Code required', 'Paste the code snippet.'); return; }
+      record.language = els.fLanguage.value;
+      record.code_snippet = snippet;
+      record.animation_url = els.fAnimationUrl.value.trim();
+      record.github_url = els.fGithubUrl.value.trim();
+    } else if (type === 'youtube') {
+      var url = els.fVideoUrl.value.trim();
+      if (!url) { toast('error', 'YouTube URL required', 'Paste a video link.'); return; }
+      record.video_url = url;
+      record.description = els.fYtDesc.value.trim();
+    } else if (type === 'pdf') {
+      var pdfUrl = els.fPdfUrl.value.trim();
+      if (state.pendingPdf) {
+        pdfUrl = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
+        els.fPdfUrl.value = pdfUrl;
+      }
+      if (!pdfUrl) { toast('error', 'PDF required', 'Upload a file or enter an existing path.'); return; }
+      record.pdf_url = pdfUrl;
+      record.custom_thumbnail = els.fPdfThumb.value.trim();
+      record.course = els.fCoursePdf.value.trim();
+    }
+
+    // If editing and the content type changed, remove from the old array first.
+    if (state.editingId && state.editingType && state.editingType !== type) {
+      var oldArrKey = TYPE_TO_ARRAY[state.editingType];
+      state.raw[oldArrKey] = state.raw[oldArrKey].filter(function (i) { return i.id !== state.editingId; });
+    }
+
+    var arrKey = TYPE_TO_ARRAY[type];
+    var arr = state.raw[arrKey];
+    var existingIdx = arr.findIndex(function (i) { return i.id === record.id; });
+    if (existingIdx >= 0) arr[existingIdx] = record;
+    else arr.push(record);
 
     state.dirty = true;
     renderItems();
@@ -564,10 +618,7 @@
       if (e.key === 'Enter' || e.key === ',') {
         e.preventDefault();
         var val = els.fTagsInput.value.trim().replace(/,$/, '');
-        if (val && state.tags.indexOf(val) === -1) {
-          state.tags.push(val);
-          renderTagChips();
-        }
+        if (val && state.tags.indexOf(val) === -1) { state.tags.push(val); renderTagChips(); }
         els.fTagsInput.value = '';
       } else if (e.key === 'Backspace' && !els.fTagsInput.value && state.tags.length) {
         state.tags.pop();
@@ -591,7 +642,7 @@
   }
 
   /* ---------------------------------------------------------------------
-     PDF upload (drag/drop + click), staged for commit
+     PDF upload (staged for commit)
      ------------------------------------------------------------------- */
 
   function bindPdfDrop() {
@@ -609,10 +660,7 @@
   }
 
   function handlePdfFile(file) {
-    if (file.type !== 'application/pdf') {
-      toast('error', 'Not a PDF', 'Please choose a .pdf file.');
-      return;
-    }
+    if (file.type !== 'application/pdf') { toast('error', 'Not a PDF', 'Please choose a .pdf file.'); return; }
     var reader = new FileReader();
     reader.onload = function () {
       var base64 = reader.result.split(',')[1];
@@ -636,21 +684,26 @@
     els.copyPayloadBtn.addEventListener('click', copyJsonPayload);
   }
 
+  function totalItemCount() {
+    return state.raw.problems.length + state.raw.stories.length + state.raw.code_animations.length +
+      state.raw.youtube.length + state.raw.pdf.length;
+  }
+
   function updateCommitBar() {
     els.commitBar.style.display = state.dirty ? 'flex' : 'none';
     els.commitBarText.textContent = state.dirty
-      ? 'You have unsaved local changes (' + state.items.length + ' items).'
+      ? 'You have unsaved local changes (' + totalItemCount() + ' items total).'
       : '';
   }
 
   function buildPayload() {
     return {
-      meta: {
-        schemaVersion: '1.0.0',
-        siteTitle: 'Anur Qoradalov — Digital Garden',
-        updatedAt: new Date().toISOString()
-      },
-      items: state.items
+      meta: { schemaVersion: '2.0.0', siteTitle: 'Anur Qoradalov', updatedAt: new Date().toISOString() },
+      problems: state.raw.problems,
+      stories: state.raw.stories,
+      code_animations: state.raw.code_animations,
+      youtube: state.raw.youtube,
+      pdf: state.raw.pdf
     };
   }
 
@@ -693,24 +746,14 @@
         toast('info', 'Uploading PDF…', state.pendingPdf.fileName);
         var assetPath = normalizeFolder(state.settings.assetPath) + state.pendingPdf.fileName;
         var existing = await ghGetFileRaw(assetPath).catch(function () { return null; });
-        await ghPutFile(
-          assetPath,
-          state.pendingPdf.base64,
-          'Add asset: ' + state.pendingPdf.fileName,
-          existing ? existing.sha : undefined
-        );
+        await ghPutFile(assetPath, state.pendingPdf.base64, 'Add asset: ' + state.pendingPdf.fileName, existing ? existing.sha : undefined);
         toast('success', 'PDF uploaded', assetPath);
         state.pendingPdf = null;
       }
 
       var payload = buildPayload();
       var contentBase64 = utf8ToBase64(JSON.stringify(payload, null, 2));
-      var result = await ghPutFile(
-        state.settings.dataPath,
-        contentBase64,
-        'Update content: ' + payload.items.length + ' items',
-        state.dataSha || undefined
-      );
+      var result = await ghPutFile(state.settings.dataPath, contentBase64, 'Update content: ' + totalItemCount() + ' items', state.dataSha || undefined);
 
       state.dataSha = result.content ? result.content.sha : null;
       state.dirty = false;

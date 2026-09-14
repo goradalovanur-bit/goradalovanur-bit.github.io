@@ -4,12 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin — Digital Garden</title>
+  <title>Admin — Anur Qoradalov</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 </head>
 
 <body>
@@ -43,7 +44,7 @@
         <div class="admin-brand-mark">∫</div>
         <div>
           <div class="admin-brand-text">Content Admin</div>
-          <div class="admin-brand-sub">Digital Garden CMS</div>
+          <div class="admin-brand-sub">Academic Portal CMS</div>
         </div>
       </div>
 
@@ -76,7 +77,7 @@
         <div class="admin-header">
           <div>
             <h2>All Items</h2>
-            <p>Everything currently in <span class="mono">data.json</span>. Edit or remove an entry, or add a new one.</p>
+            <p>Everything currently in <span class="mono">data.json</span>, across all five content types.</p>
           </div>
           <div style="display:flex; gap:10px;">
             <button class="btn" id="refreshItemsBtn"><svg aria-hidden="true"><use href="#i-cloud"/></svg>Reload from GitHub</button>
@@ -100,39 +101,100 @@
         <div class="admin-header">
           <div>
             <h2 id="editorHeading">Add New Item</h2>
-            <p>Fill in the fields for the content type. Changes are staged locally until you commit.</p>
+            <p>Pick a content type — the fields below change to match. Changes are staged locally until you commit.</p>
           </div>
         </div>
 
-        <form class="settings-card" id="itemForm" style="max-width:640px;">
+        <form class="settings-card" id="itemForm" style="max-width:680px;">
           <input type="hidden" id="f-id">
+          <input type="hidden" id="f-sourcetype">
 
           <div class="field">
             <label for="f-type">Content type</label>
             <select id="f-type">
+              <option value="problem">Solved Problem</option>
+              <option value="story">Math Insight (Story)</option>
+              <option value="code">Code &amp; Animation</option>
               <option value="youtube">YouTube Video</option>
               <option value="pdf">PDF Document</option>
-              <option value="latex">LaTeX Formula</option>
-              <option value="link">Custom Link</option>
             </select>
           </div>
 
           <div class="field">
             <label for="f-title">Title</label>
-            <input type="text" id="f-title" placeholder="e.g. An Intuition for the Cauchy Integral Formula" required>
+            <input type="text" id="f-title" placeholder="e.g. Filippov № 64: Xətti Diferensial Tənliyin Həlli" required>
           </div>
 
-          <div class="field">
-            <label for="f-desc">Description</label>
-            <textarea id="f-desc" placeholder="One or two sentences describing this entry" style="min-height:70px; font-family:inherit; font-size:0.9rem;"></textarea>
+          <!-- Problem fields -->
+          <div class="type-fields" data-type-fields="problem">
+            <div class="field">
+              <label for="f-course-problem">University course</label>
+              <input type="text" id="f-course-problem" placeholder="e.g. Adi Diferensial Tənliklər">
+            </div>
+            <div class="field">
+              <label for="f-question">Question (LaTeX + text — wrap math in $...$ or $$...$$)</label>
+              <textarea id="f-question" class="serif-textarea" placeholder="Tənliyi həll edin: $$y' - y/x = x$$"></textarea>
+              <p class="hint">Use blank lines for new paragraphs, and lines starting with <span class="mono">### </span> for section headers.</p>
+            </div>
+            <div class="live-preview" id="questionPreview"><span class="ph">Live preview appears here</span></div>
+
+            <div class="field" style="margin-top:18px;">
+              <label for="f-solution">Solution (Overleaf-style — same syntax as above)</label>
+              <textarea id="f-solution" class="serif-textarea" placeholder="### 1. Addım&#10;&#10;İzah mətni... $$formula$$"></textarea>
+            </div>
+            <div class="live-preview" id="solutionPreview"><span class="ph">Live preview appears here</span></div>
+          </div>
+
+          <!-- Story fields -->
+          <div class="type-fields" data-type-fields="story">
+            <div class="field">
+              <label for="f-content">Story content</label>
+              <textarea id="f-content" class="serif-textarea" style="min-height:160px;" placeholder="Hekayənin mətni... blank sətirlər yeni paraqraf yaradır."></textarea>
+            </div>
+            <div class="live-preview" id="contentPreview"><span class="ph">Live preview appears here</span></div>
+            <div class="field" style="margin-top:18px;">
+              <label for="f-image">Cover image URL (optional)</label>
+              <input type="text" id="f-image" placeholder="assets/img/kakeya-cover.jpg">
+            </div>
+          </div>
+
+          <!-- Code & Animation fields -->
+          <div class="type-fields" data-type-fields="code">
+            <div class="field">
+              <label for="f-language">Language / Tool</label>
+              <select id="f-language">
+                <option value="Manim">Manim</option>
+                <option value="MATLAB">MATLAB</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-code-snippet">Code snippet</label>
+              <textarea id="f-code-snippet" placeholder="Kodu buraya yapışdırın…" style="min-height:160px;"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="f-animation-url">Animation / video URL (optional)</label>
+                <input type="url" id="f-animation-url" placeholder="https://youtu.be/…">
+              </div>
+              <div class="field">
+                <label for="f-github-url">GitHub URL (optional)</label>
+                <input type="url" id="f-github-url" placeholder="https://github.com/…">
+              </div>
+            </div>
           </div>
 
           <!-- YouTube fields -->
           <div class="type-fields" data-type-fields="youtube">
             <div class="field">
-              <label for="f-youtube-url">YouTube URL</label>
-              <input type="url" id="f-youtube-url" placeholder="https://youtu.be/…">
-              <p class="hint">Full watch, share, or embed link — the ID is extracted automatically.</p>
+              <label for="f-video-url">YouTube URL</label>
+              <input type="url" id="f-video-url" placeholder="https://youtu.be/…">
+              <p class="hint">The thumbnail is generated automatically from the video ID.</p>
+            </div>
+            <div class="field">
+              <label for="f-yt-desc">Description</label>
+              <textarea id="f-yt-desc" style="min-height:80px; font-family:inherit; font-size:0.9rem;"></textarea>
             </div>
           </div>
 
@@ -152,39 +214,14 @@
               <label for="f-pdf-url">PDF path or URL</label>
               <input type="text" id="f-pdf-url" placeholder="assets/pdf/my-notes.pdf">
             </div>
-          </div>
-
-          <!-- LaTeX fields -->
-          <div class="type-fields" data-type-fields="latex">
             <div class="field">
-              <label for="f-latex">LaTeX source</label>
-              <textarea id="f-latex" placeholder="\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y}"></textarea>
-              <p class="hint">Raw LaTeX, rendered live below via KaTeX.</p>
-            </div>
-            <div class="latex-preview" id="latexPreview"><span class="ph">Live preview appears here</span></div>
-          </div>
-
-          <!-- Link fields -->
-          <div class="type-fields" data-type-fields="link">
-            <div class="field">
-              <label for="f-link-url">Link URL</label>
-              <input type="url" id="f-link-url" placeholder="https://example.com/…">
+              <label for="f-pdf-thumb">Custom thumbnail URL (optional)</label>
+              <input type="text" id="f-pdf-thumb" placeholder="assets/img/my-notes-cover.jpg">
+              <p class="hint">Leave blank to use the default document icon.</p>
             </div>
             <div class="field">
-              <label for="f-link-label">Button label</label>
-              <input type="text" id="f-link-label" placeholder="e.g. View on Reshu.ru">
-            </div>
-          </div>
-
-          <!-- Common: optional source file link -->
-          <div class="field-row">
-            <div class="field">
-              <label for="f-source-url">Source file URL (optional)</label>
-              <input type="text" id="f-source-url" placeholder="notes/source/file.tex">
-            </div>
-            <div class="field">
-              <label for="f-source-label">Source button label</label>
-              <input type="text" id="f-source-label" placeholder="e.g. .tex Code">
+              <label for="f-course-pdf">University course</label>
+              <input type="text" id="f-course-pdf" placeholder="e.g. Kompleks Analiz">
             </div>
           </div>
 
@@ -262,7 +299,7 @@
     </main>
   </div>
 
-  <!-- ===================== COMMIT BAR (fixed, appears when there are unsaved local changes) ===================== -->
+  <!-- ===================== COMMIT BAR ===================== -->
   <div class="settings-card" id="commitBar" style="position:fixed; bottom:22px; left:50%; transform:translateX(-50%); display:none; z-index:150; padding:14px 18px; max-width:560px; width:calc(100% - 44px); align-items:center; gap:14px; flex-direction:row; justify-content:space-between;">
     <span style="font-size:0.86rem; font-weight:600;" id="commitBarText">You have unsaved local changes.</span>
     <div style="display:flex; gap:8px;">

@@ -1,127 +1,126 @@
-# Digital Garden CMS — Setup Guide
+# Anur Qoradalov — Academic Portal: Setup Guide
 
-A JSON-driven content system for a GitHub Pages site: `data.json` holds every
-item, `index.html` + `app.js` render it publicly, and `admin.html` + `admin.js`
-let you add, edit, and delete items through a visual panel that commits
-straight to GitHub — no server, no build step.
+A Medium-style academic content portal for GitHub Pages. Five content types
+(Solved Problems, Math Insights, Code & Animations, YouTube, PDF) live in a
+single `data.json`, `index.html` + `app.js` render the public feed, and
+`admin.html` + `admin.js` let you add/edit/delete everything visually and
+commit straight to GitHub — no server, no build step.
 
 ## 1. File layout
 
-Drop these six files into the root of your GitHub Pages repo (the same folder
-as your existing `index.html`):
-
 ```
 /
-├── data.json      ← content database
-├── index.html     ← public site
+├── data.json      ← content database (5 arrays: problems, stories, code_animations, youtube, pdf)
+├── index.html     ← public feed (sidebar nav + filter pills + cards)
 ├── app.js         ← public rendering engine
 ├── admin.html     ← admin panel
 ├── admin.js       ← admin panel logic
-├── styles.css     ← shared design system
+├── styles.css     ← shared design system (Medium-style + Overleaf paper look)
 └── assets/
-    └── pdf/       ← uploaded PDFs land here
+    ├── pdf/       ← uploaded PDFs land here
+    └── img/       ← optional cover images / custom thumbnails
 ```
 
-If you already have a hand-written `index.html`, back it up, then replace it
-with the one here (or merge the hero/footer content into it — the structure
-is intentionally close to what you had).
+Replace your existing files with these six and push.
 
-## 2. Push the files to GitHub
+## 2. Push to GitHub
 
 ```bash
 git add data.json index.html app.js admin.html admin.js styles.css
-git commit -m "Switch to JSON-driven content system"
+git commit -m "Rebuild as Medium-style academic portal"
 git push
 ```
 
-GitHub Pages will redeploy automatically. Confirm `https://<you>.github.io/`
-still loads and that `https://<you>.github.io/data.json` returns the JSON
-file directly.
+Confirm `https://<you>.github.io/` and `https://<you>.github.io/data.json`
+both load after Pages redeploys (usually within a minute or two).
 
-## 3. Create a GitHub Personal Access Token (PAT)
+## 3. The content model
 
-The admin panel needs a token with write access to **one repo only** —
-use a fine-grained token, not a classic one with broad scope.
+Every item lives in one of five arrays in `data.json`:
+
+| Array             | Sidebar section     | Key fields |
+|--------------------|----------------------|------------|
+| `problems`          | Solved Problems      | `question_latex`, `solution_latex`, `course` |
+| `stories`            | Math Insights         | `content`, `image` |
+| `code_animations`   | Code & Animations     | `language`, `code_snippet`, `animation_url`, `github_url` |
+| `youtube`            | YouTube                | `video_url`, `description` |
+| `pdf`                 | *(shown in Home feed)* | `pdf_url`, `custom_thumbnail`, `course` |
+
+`question_latex`, `solution_latex`, and `content` all use the same simple
+syntax — you never touch raw LaTeX rendering logic, just write:
+
+- Plain text for prose (Azerbaijani, English, anything UTF-8).
+- Inline math wrapped in `$...$`, block math in `$$...$$`.
+- A blank line to start a new paragraph.
+- A line starting with `### ` to make a section heading (used heavily in
+  Overleaf-style solutions, e.g. `### 1. Tənliyin növü`).
+- `**bold**` for emphasis.
+
+This is all handled by the admin panel's live preview — you don't need to
+memorize it, just watch the preview update as you type.
+
+## 4. Create a GitHub Personal Access Token (PAT)
 
 1. Go to **github.com → Settings → Developer settings → Personal access
-   tokens → Fine-grained tokens → Generate new token**.
-2. **Token name**: something recognizable, e.g. `digital-garden-admin`.
-3. **Expiration**: pick a short window (30–90 days) and re-issue later —
-   don't use "no expiration."
-4. **Repository access**: choose **Only select repositories** and pick your
-   Pages repo. Do not grant access to any other repository.
-5. **Permissions → Repository permissions → Contents**: set to
-   **Read and write**. Everything else can stay at **No access**.
-6. Click **Generate token** and copy it immediately — GitHub only shows it
-   once.
+   tokens → Fine-grained tokens → Generate new token**
+   (or jump straight there: `https://github.com/settings/personal-access-tokens/new`).
+2. **Token name**: e.g. `academic-portal-admin`.
+3. **Expiration**: your choice — a dated expiry (30–90 days) is more
+   cautious; "No expiration" is fine for a low-risk personal site as long as
+   you revoke it if it's ever exposed.
+4. **Repository access → Only select repositories** → pick your Pages repo only.
+5. Click **+ Add permissions**, choose **Contents**, set it to **Read and write**.
+6. **Generate token** and copy it immediately.
 
-Keep this token private. Anyone with it can write files to that one
-repository for as long as it's valid.
-
-## 4. Connect the admin panel
+## 5. Connect the admin panel
 
 1. Open `https://<you>.github.io/admin.html`.
-2. Go to **GitHub Settings** in the sidebar and fill in:
-   - **Personal Access Token** — paste the token from step 3.
-   - **Repository owner** — your GitHub username or org, e.g. `goradalovanur-bit`.
-   - **Repository name** — the Pages repo name, e.g. `goradalovanur-bit.github.io`.
-   - **Branch** — usually `main`.
-   - **Path to data.json** — `data.json` if it's at the repo root.
-   - **PDF asset folder** — `assets/pdf/`.
-3. Click **Save & Test Connection**. A green "Connected to owner/repo" status
-   in the sidebar confirms the token works and has write access.
+2. **GitHub Settings** → paste the token, fill in owner, repo name, branch
+   (`main`), `data.json` path, and PDF asset folder (`assets/pdf/`).
+3. **Save & Test Connection** — a green "Connected to owner/repo" status
+   confirms it works.
 
-The token is stored only in this browser's `localStorage` — it is never sent
-anywhere except `api.github.com`, and it is not included in the site's
-public files.
+## 6. Add content
 
-## 5. Add, edit, and remove content
+**Add New Item** → pick a **Content type**, and the form adapts:
 
-- **All Items** lists everything currently in `data.json`. Use the pencil
-  icon to edit an entry or the trash icon to remove one.
-- **Add New Item** opens the editor. Pick a **Content type** first —
-  the form fields change to match:
-  - **YouTube Video** — paste any watch/share/embed link.
-  - **PDF Document** — drag a file onto the drop zone (staged for upload on
-    commit) or type an existing path/URL if the file is already in the repo.
-  - **LaTeX Formula** — type raw LaTeX; a live KaTeX preview renders below
-    the field as you type.
-  - **Custom Link** — a URL plus a button label.
-- Every type also has optional **Source file URL / label** fields (useful
-  for linking a `.tex` source or original dataset alongside the main item),
-  a **Date**, and free-form **Tags** (press Enter or comma to add one).
-- Click **Save to List** — this stages the change locally; nothing is
-  written to GitHub yet.
+- **Solved Problem** — course name, a **Question** field and a **Solution**
+  field (both with live LaTeX preview), rendered on the public site as
+  question-first with a "Show Solution" toggle that expands an Overleaf-style
+  paper panel.
+- **Math Insight (Story)** — free-form content with live preview, optional
+  cover image URL.
+- **Code & Animation** — pick a language (Manim / MATLAB / Python / C++),
+  paste the code snippet, optionally link a video and/or GitHub repo.
+- **YouTube Video** — just the URL and a description; the thumbnail is
+  generated automatically from the video ID.
+- **PDF Document** — drag a file onto the drop zone (staged for upload) or
+  paste an existing path, plus an optional custom thumbnail and course name.
 
-## 6. Commit changes
+Every type also has **Date** and free-form **Tags**. **Save to List** stages
+the change locally — nothing is written to GitHub yet.
 
-Once you've staged at least one change, a bar appears at the bottom of the
-screen:
+## 7. Commit changes
+
+Once something is staged, a bar appears at the bottom:
 
 - **Commit to GitHub** — uploads any staged PDF first, then writes the full
-  updated `data.json` back to the repo in a single commit. GitHub Pages
-  redeploys within a minute or two.
-- **Copy JSON** — copies the full `data.json` payload to your clipboard as a
-  fallback, useful if you're offline, don't want to store a token in this
-  browser, or prefer to commit manually (paste it over the file's contents
-  in GitHub's web editor, or save it locally and `git push`).
+  updated `data.json` in one commit.
+- **Copy JSON** — copies the payload to your clipboard as an offline/manual
+  fallback.
 
-## 7. Everyday workflow
+## 8. Everyday workflow
 
 1. Open `admin.html`.
-2. Add/edit/delete items.
-3. Click **Commit to GitHub**.
-4. Refresh the public site in a minute or two once Pages redeploys.
-
-No local dev server, build step, or dependency install is required — every
-file is static and can be edited and committed entirely from the browser.
+2. Add/edit/delete items across any of the five types.
+3. **Commit to GitHub**.
+4. Refresh the public site once Pages redeploys.
 
 ## Notes on security
 
-- Treat the PAT like a password. Clear it (**Clear Token** in Settings)
-  on shared or public computers.
-- Because the token is fine-grained and scoped to Contents on one repo,
-  a leaked token can only modify files in that repository — it cannot
-  access your account, other repos, or billing settings.
-- Regenerate the token if you ever see unexpected commits, and rotate it
-  periodically regardless.
+- The token lives only in this browser's `localStorage`, sent only to
+  `api.github.com`.
+- It's fine-grained and scoped to Contents on one repo — a leaked token
+  can't touch anything else in your account.
+- Use **Clear Token** on shared computers, and revoke/regenerate if you ever
+  suspect it's been exposed.
