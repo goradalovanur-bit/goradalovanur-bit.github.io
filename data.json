@@ -2,7 +2,7 @@
   "meta": {
     "schemaVersion": "2.1.0",
     "siteTitle": "Anur Qoradalov",
-    "updatedAt": "2026-09-14T08:18:29.128Z",
+    "updatedAt": "2026-09-14T08:25:04.395Z",
     "avatarUrl": ""
   },
   "problems": [
@@ -54,21 +54,6 @@
       "tags": [
         "biography",
         "history"
-      ]
-    },
-    {
-      "id": "itm_k4zf1py",
-      "title": "filoioado",
-      "date": "21213-03-12",
-      "tags": [],
-      "content": "asfasdfasf\n\n$\\sum$sfasaf\nafasdasd",
-      "image": "",
-      "images": [
-        {
-          "url": "https://www.google.com/imgres?q=jpg&imgurl=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Ff%2Ff2%2FFelis_silvestris_silvestris_small_gradual_decrease_of_quality_-_JPEG_compression.jpg%2F250px-Felis_silvestris_silvestris_small_gradual_decrease_of_quality_-_JPEG_compression.jpg%3Futm_source%3Den.wikipedia.org%26utm_campaign%3Dparser%26utm_content%3Dthumbnail&imgrefurl=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FJPEG&docid=TGmLEuRGx67lkM&tbnid=Bhuqir2iNWUlVM&vet=12ahUKEwif4J2T0e2WAxUY8LsIHZgYFssQnPAOegQIRhAA..i&w=250&h=289&hcb=2&ved=2ahUKEwif4J2T0e2WAxUY8LsIHZgYFssQnPAOegQIRhAA",
-          "placement": "left",
-          "caption": "asdad"
-        }
       ]
     }
   ],
