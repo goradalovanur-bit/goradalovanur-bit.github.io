@@ -2,7 +2,7 @@
   "meta": {
     "schemaVersion": "3.0.0",
     "siteTitle": "Anur Qoradalov",
-    "updatedAt": "2026-09-14T15:54:57.564Z",
+    "updatedAt": "2026-09-14T15:57:06.723Z",
     "avatarUrl": "",
     "fields": [
       {
@@ -105,87 +105,6 @@
       "tags": [
         "biography",
         "history"
-      ]
-    },
-    {
-      "id": "itm_g1204hh",
-      "title": "aregag",
-      "date": "2026-09-14T19:54",
-      "tags": [],
-      "media": [
-        {
-          "id": "itm_kix9qpt",
-          "kind": "image",
-          "url": "assets/img/itm_n9avtra-screenshot-2026-09-14-005622.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_1sf459u",
-          "kind": "image",
-          "url": "assets/img/itm_xyn076d-screenshot-2026-09-14-005553.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_37lery9",
-          "kind": "image",
-          "url": "assets/img/itm_b2l6min-screenshot-2026-08-27-205402.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_ie2jwp1",
-          "kind": "image",
-          "url": "assets/img/itm_lucjstc-screenshot-2026-08-10-222100.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_q77pd34",
-          "kind": "image",
-          "url": "assets/img/itm_1ie9jw6-screenshot-2026-08-10-205725.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_2ruiefc",
-          "kind": "image",
-          "url": "assets/img/itm_0bntqtn-screenshot-2026-08-10-205342.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        },
-        {
-          "id": "itm_94e0d47",
-          "kind": "image",
-          "url": "assets/img/itm_hs3tdup-cropped.png",
-          "placement": "inline",
-          "width": 80,
-          "caption": "hote"
-        },
-        {
-          "id": "itm_v6htzhm",
-          "kind": "image",
-          "url": "assets/img/itm_cz4ldwp-screenshot-2026-08-10-220556.png",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        }
-      ],
-      "content": "sfsdfagaegaegaegaeg\"ƏƏƏ\n$\\sum$",
-      "image": "file:///C:/Users/asus/Pictures/Screenshots/Screenshot%202026-09-09%20112557.png",
-      "images": [
-        {
-          "url": "https://unsplash.com/s/photos/url",
-          "placement": "left",
-          "caption": ""
-        }
       ]
     }
   ],
