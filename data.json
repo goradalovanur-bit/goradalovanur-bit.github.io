@@ -2,7 +2,7 @@
   "meta": {
     "schemaVersion": "3.0.0",
     "siteTitle": "Anur Qoradalov",
-    "updatedAt": "2026-09-17T06:07:40.622Z",
+    "updatedAt": "2026-09-17T06:13:04.116Z",
     "avatarUrl": "",
     "fields": [
       {
@@ -81,26 +81,6 @@
         "geometry",
         "inequality"
       ]
-    },
-    {
-      "id": "itm_39rxcev",
-      "title": "afdafadfdas",
-      "date": "2026-09-17T10:07",
-      "status": "published",
-      "tags": [],
-      "media": [
-        {
-          "id": "itm_7dn464h",
-          "kind": "image",
-          "url": "assets/img/itm_zrx9kgv-bertrand_russell_1957.webp",
-          "placement": "full",
-          "width": 100,
-          "caption": ""
-        }
-      ],
-      "course": "",
-      "question_latex": "$$\nx = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}\n$$\n![Image](assets/img/itm_unpuvd4-whatsapp-image-2026-08-05-at-1.55.04-pm.webp){align=L size=60 mode=wrap}\n\n![Image](assets/img/itm_f9wmow1-bertrand_russell_1957.webp){align=D size=100 mode=break}\n\n**qalın mətn**gsrg",
-      "solution_latex": "rwrewrw"
     }
   ],
   "stories": [
