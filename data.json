@@ -2,21 +2,57 @@
   "meta": {
     "schemaVersion": "3.0.0",
     "siteTitle": "Anur Qoradalov",
-    "updatedAt": "2026-09-14T00:00:00Z",
+    "updatedAt": "2026-09-17T06:07:40.622Z",
     "avatarUrl": "",
     "fields": [
-      { "slug": "algebra", "label": "Algebra" },
-      { "slug": "complex-analysis", "label": "Complex Analysis" },
-      { "slug": "geometry", "label": "Geometry" },
-      { "slug": "lebesgue-integral-and-measure", "label": "Lebesgue Integral & Measure" },
-      { "slug": "mathematical-logic", "label": "Mathematical Logic" },
-      { "slug": "mathematical-statistics", "label": "Mathematical Statistics" },
-      { "slug": "numerical-analysis", "label": "Numerical Analysis" },
-      { "slug": "ordinary-differential-equations", "label": "ODE" },
-      { "slug": "partial-differential-equations", "label": "PDE" },
-      { "slug": "probability", "label": "Probability" },
-      { "slug": "real-analysis", "label": "Real Analysis" },
-      { "slug": "topology", "label": "Topology" }
+      {
+        "slug": "algebra",
+        "label": "Algebra"
+      },
+      {
+        "slug": "complex-analysis",
+        "label": "Complex Analysis"
+      },
+      {
+        "slug": "geometry",
+        "label": "Geometry"
+      },
+      {
+        "slug": "lebesgue-integral-and-measure",
+        "label": "Lebesgue Integral & Measure"
+      },
+      {
+        "slug": "mathematical-logic",
+        "label": "Mathematical Logic"
+      },
+      {
+        "slug": "mathematical-statistics",
+        "label": "Mathematical Statistics"
+      },
+      {
+        "slug": "numerical-analysis",
+        "label": "Numerical Analysis"
+      },
+      {
+        "slug": "ordinary-differential-equations",
+        "label": "ODE"
+      },
+      {
+        "slug": "partial-differential-equations",
+        "label": "PDE"
+      },
+      {
+        "slug": "probability",
+        "label": "Probability"
+      },
+      {
+        "slug": "real-analysis",
+        "label": "Real Analysis"
+      },
+      {
+        "slug": "topology",
+        "label": "Topology"
+      }
     ]
   },
   "courses": [],
@@ -28,7 +64,11 @@
       "solution_latex": "### 1. Tənliyin növünün müəyyən edilməsi\n\nTənlik $y' + P(x)y = Q(x)$ formasındadır, burada $P(x) = -\\dfrac{1}{x}$, $Q(x) = x$.\n\n### 2. İnteqrallayıcı vuruğun tapılması\n\n$$\\mu(x) = e^{\\int P(x)\\,dx} = e^{-\\int \\frac{1}{x}\\,dx} = e^{-\\ln|x|} = \\dfrac{1}{x}$$\n\n### 3. Tənliyin hər iki tərəfini $\\mu(x)$-ə vurmaq\n\n$$\\dfrac{1}{x}y' - \\dfrac{1}{x^2}y = 1 \\quad\\Longrightarrow\\quad \\left(\\dfrac{y}{x}\\right)' = 1$$\n\n### 4. Hər iki tərəfi inteqrallamaq\n\n$$\\dfrac{y}{x} = \\int 1\\,dx = x + C \\quad\\Longrightarrow\\quad y = x^2 + Cx$$\n\n### 5. Başlanğıc şərtin tətbiqi\n\nBaşlanğıc şərt $y(1)=0$-dır:\n\n$$1 + C = 0 \\;\\Longrightarrow\\; C = -1$$\n\n### 6. Nəticə — Koşi məsələsinin həlli\n\n$$\\boxed{y(x) = x^2 - x}$$\n\n**Yoxlama:** $y' = 2x-1$, $\\dfrac{y}{x} = x-1$, ona görə də $y' - \\dfrac{y}{x} = (2x-1)-(x-1) = x$. ✓",
       "course": "Adi Diferensial Tənliklər",
       "date": "2026-08-20",
-      "tags": ["ode", "integrating-factor", "cauchy-problem"]
+      "tags": [
+        "ode",
+        "integrating-factor",
+        "cauchy-problem"
+      ]
     },
     {
       "id": "prob_geom01",
@@ -37,7 +77,30 @@
       "solution_latex": "### 1. Bərabəryanlı hal ($a=b$)\n\nSimmetriya mülahizəsi ilə minimum $a=b$ olduqda əldə edilir; ixtiyari $a \\ne b$ halında $K$ qiyməti artır.\n\n### 2. Dəyişən əvəzləməsi\n\n$a=b=1$ qəbul edib $c \\in (0,2)$ üçün Kosinuslar teoremindən:\n\n$$c^2 = 2 - 2\\cos C$$\n\n### 3. Funksiyanın qurulması\n\n$$K(C) = \\dfrac{2}{2-2\\cos C} = \\dfrac{1}{1-\\cos C}$$\n\n### 4. Törəmə təhlili\n\n$f(x) = \\dfrac{1}{1-\\cos x}$ funksiyası $x \\in (0,\\pi)$ intervalında monoton azalandır, minimumuna $x \\to \\pi$ sərhəddinə yaxınlaşdıqda deyil, düzbucaqlı bərabəryanlı üçbucağa uyğun gələn nöqtədə çatır. Ətraflı törəmə analizi göstərir ki, $K(C) \\geq \\tfrac12$ bərabərsizliyi bütün $C$ üçün doğrudur.\n\n### 5. Nəticə\n\n$$\\boxed{K_{\\min} = \\dfrac{1}{2}}$$\n\nBərabərlik yalnız düzbucaqlı bərabəryanlı üçbucaqda baş verir.",
       "course": "Həndəsə",
       "date": "2026-07-11",
-      "tags": ["geometry", "inequality"]
+      "tags": [
+        "geometry",
+        "inequality"
+      ]
+    },
+    {
+      "id": "itm_39rxcev",
+      "title": "afdafadfdas",
+      "date": "2026-09-17T10:07",
+      "status": "published",
+      "tags": [],
+      "media": [
+        {
+          "id": "itm_7dn464h",
+          "kind": "image",
+          "url": "assets/img/itm_zrx9kgv-bertrand_russell_1957.webp",
+          "placement": "full",
+          "width": 100,
+          "caption": ""
+        }
+      ],
+      "course": "",
+      "question_latex": "$$\nx = \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}\n$$\n![Image](assets/img/itm_unpuvd4-whatsapp-image-2026-08-05-at-1.55.04-pm.webp){align=L size=60 mode=wrap}\n\n![Image](assets/img/itm_f9wmow1-bertrand_russell_1957.webp){align=D size=100 mode=break}\n\n**qalın mətn**gsrg",
+      "solution_latex": "rwrewrw"
     }
   ],
   "stories": [
@@ -47,7 +110,11 @@
       "content": "Təsəvvür edin ki, əlinizdə uzunluğu 1 olan bir iynə var və onu müstəvidə tam bir dəfə, yəni 360 dərəcə, döndərmək istəyirsiniz. Sual sadədir: bunun üçün ən az nə qədər sahəyə ehtiyacınız var?\n\nİlk baxışda cavab dairə kimi görünür, amma 1917-ci ildə Soiçi Kakeya bu sualı verəndən sonra riyaziyyatçılar sahəni istənilən qədər kiçiltmək, hətta sıfıra yaxınlaşdırmaq mümkün olduğunu aşkar etdilər. Bu, Besikoviç çoxluqları adlanan qəribə, fraktal quruluşlu fiqurların kəşfinə gətirib çıxardı.\n\nKakeya sualının özü sadə həndəsi tapmaca kimi başlasa da, onun izləri harmonik analiz, ədədlər nəzəriyyəsi və hətta məlumatların sıxılması riyaziyyatına qədər uzanır — elə buna görə də 2026-cı ildə diqqət çəkən nəticələrdən biri məhz bu sahədəki irəliləyişlə bağlı oldu.",
       "image": "",
       "date": "2026-08-02",
-      "tags": ["pop-science", "geometry", "fractals"]
+      "tags": [
+        "pop-science",
+        "geometry",
+        "fractals"
+      ]
     },
     {
       "id": "story_euler",
@@ -55,7 +122,10 @@
       "content": "Euler həyatının son 17 ilini demək olar ki, tam kor keçirdi, amma bu dövr onun ən məhsuldar illəri oldu. O, mürəkkəb hesablamaları zehnində aparır, nəticələri katiblərinə diktə edirdi.\n\nBu qabiliyyət təkcə heyrətamiz yaddaşdan deyil, riyazi obyektləri simvolik və strukturlaşdırılmış şəkildə düşünmə vərdişindən qaynaqlanırdı — bu gün də riyaziyyat öyrənərkən inkişaf etdirməyə çalışdığımız məhz bu bacarıqdır.",
       "image": "",
       "date": "2026-05-30",
-      "tags": ["biography", "history"]
+      "tags": [
+        "biography",
+        "history"
+      ]
     }
   ],
   "code_animations": [
@@ -67,7 +137,9 @@
       "animation_url": "https://youtu.be/example-riemann-mapping",
       "github_url": "https://github.com/goradalovanur-bit/manim-riemann-mapping",
       "date": "2026-06-18",
-      "tags": ["complex-analysis"]
+      "tags": [
+        "complex-analysis"
+      ]
     },
     {
       "id": "code_lotka",
@@ -77,7 +149,10 @@
       "animation_url": "",
       "github_url": "https://github.com/goradalovanur-bit/lotka-volterra-matlab",
       "date": "2026-04-22",
-      "tags": ["ode", "numerical-analysis"]
+      "tags": [
+        "ode",
+        "numerical-analysis"
+      ]
     },
     {
       "id": "code_bootstrap",
@@ -87,7 +162,9 @@
       "animation_url": "",
       "github_url": "https://github.com/goradalovanur-bit/bootstrap-ci-python",
       "date": "2026-03-09",
-      "tags": ["statistics"]
+      "tags": [
+        "statistics"
+      ]
     },
     {
       "id": "code_rk4",
@@ -97,7 +174,9 @@
       "animation_url": "",
       "github_url": "https://github.com/goradalovanur-bit/rk4-solver-cpp",
       "date": "2026-02-14",
-      "tags": ["numerical-analysis"]
+      "tags": [
+        "numerical-analysis"
+      ]
     }
   ],
   "youtube": [
@@ -107,7 +186,10 @@
       "video_url": "https://youtu.be/soK-6fPr2so",
       "description": "Bir iynəni 360 dərəcə döndərə biləcəyimiz ən kiçik sahə nə qədərdir? Bu videoda həmin sualın izahını araşdırır və klassik Kakeya fiqurunun Besikoviç üsulu ilə necə qurulduğunu animasiyalarla göstəririk.",
       "date": "2026-08-02",
-      "tags": ["geometry", "guest-talk"]
+      "tags": [
+        "geometry",
+        "guest-talk"
+      ]
     },
     {
       "id": "yt_cauchy",
@@ -115,7 +197,9 @@
       "video_url": "https://youtu.be/example-cauchy-intuition",
       "description": "Konturun daxilindəki holomorf funksiyanın qiymətinin niyə tamamilə sərhəddəki qiymətlərlə müəyyən olunduğunu, əvvəlcə fiziki intuisiya üzərindən izah edirik.",
       "date": "2026-06-20",
-      "tags": ["complex-analysis"]
+      "tags": [
+        "complex-analysis"
+      ]
     }
   ],
   "pdf": [
@@ -126,7 +210,9 @@
       "custom_thumbnail": "",
       "course": "Kompleks Analiz",
       "date": "2026-05-14",
-      "tags": ["exam-prep"]
+      "tags": [
+        "exam-prep"
+      ]
     },
     {
       "id": "pdf_measure",
@@ -135,7 +221,10 @@
       "custom_thumbnail": "",
       "course": "Ehtimal Nəzəriyyəsi",
       "date": "2026-08-10",
-      "tags": ["transcripts", "measure"]
+      "tags": [
+        "transcripts",
+        "measure"
+      ]
     }
   ]
 }
