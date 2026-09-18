@@ -2,7 +2,7 @@
   "meta": {
     "schemaVersion": "3.0.0",
     "siteTitle": "Anur Qoradalov",
-    "updatedAt": "2026-09-18T05:57:05.950Z",
+    "updatedAt": "2026-09-18T06:05:11.684Z",
     "avatarUrl": "assets/img/whatsapp-image-2026-09-17-at-3.07.38-pm.webp",
     "fields": [
       {
@@ -81,6 +81,26 @@
         "geometry",
         "inequality"
       ]
+    },
+    {
+      "id": "itm_0zrdei1",
+      "title": "bcbjvbmvb mnm",
+      "date": "2026-09-18T10:05",
+      "status": "published",
+      "tags": [],
+      "media": [
+        {
+          "id": "itm_c1ikw1o",
+          "kind": "image",
+          "url": "assets/img/itm_t6qyvem-cropped.webp",
+          "placement": "inline",
+          "width": 100,
+          "caption": ""
+        }
+      ],
+      "course": "",
+      "question_latex": "cxvxvxcvxccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc**qalın mətn**  ~~zxczcxcczczx~~ \n> zxczxczczczczczxc\n> Sitat mətni",
+      "solution_latex": "> Sitat mxcvxcvxcvxcvxcvətni \nghcbvc bcv\nbcvbcvbcvb\n\njklnlhlkdsfsdfsdfsfsfsdfsdfdsffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\n![Image](assets/img/itm_kfxx2ci-whatsapp-image-2026-09-17-at-3.07.38-pm.webp){align=R size=60 mode=wrap}dxxdfxdfsdfsdfsdfdsfsfsdfsdfsdfsdfsdfsdfsdfsdfsdfsdfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffsdfsdff *kursiv mətn*sdfsdfsdfsdfsd*kursiv mətn***qalın mətn**++altı xətli mətn++~~üstündən xətli mətn~~`kod`\n\n![Image](assets/img/itm_2e1rttj-whatsapp-image-2026-08-05-at-1.55.04-pm.webp){align=D size=100 mode=break}"
     }
   ],
   "stories": [
