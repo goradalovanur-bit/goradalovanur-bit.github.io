@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Anur Qoradalov</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+</head>
+
+<body>
+
+  <svg aria-hidden="true" style="position:absolute;width:0;height:0;overflow:hidden;">
+    <defs>
+      <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+      <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></symbol>
+      <symbol id="i-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></symbol>
+      <symbol id="i-course" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41 11 3.83 4 4l-.17 7L13.41 20.6a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.83z"/><line x1="8.5" y1="8.5" x2="8.51" y2="8.5"/></symbol>
+      <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+      <symbol id="i-crop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.13 1 6 16a2 2 0 0 0 2 2h15"/><path d="M1 6.13 16 6a2 2 0 0 1 2 2v15"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+      <symbol id="i-bold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 0 8H6z"/><path d="M6 12h9a4 4 0 0 1 0 8H6z"/></symbol>
+      <symbol id="i-heading" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4v16M18 4v16M6 12h12"/></symbol>
+      <symbol id="i-sigma" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 4H6l6 8-6 8h12"/></symbol>
+      <symbol id="i-italic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></symbol>
+      <symbol id="i-underline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></symbol>
+      <symbol id="i-strike" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4.5c-1-1-2.5-1.5-4-1.5-2.5 0-4.5 1.5-4.5 3.5S9.5 10 12 10s4.5 1.5 4.5 4-2 3.5-4.5 3.5c-1.5 0-3-.5-4-1.5"/><line x1="3" y1="12" x2="21" y2="12"/></symbol>
+      <symbol id="i-code-inline" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 8 4 12.5 9 17"/><polyline points="15 8 20 12.5 15 17"/></symbol>
+      <symbol id="i-quote" viewBox="0 0 24 24" fill="currentColor"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25-.15 4-3.75 4Z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25-.15 4-3.75 4Z"/></symbol>
+      <symbol id="i-list-ul" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-list-ol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="6" x2="20" y2="6"/><line x1="10" y1="12" x2="20" y2="12"/><line x1="10" y1="18" x2="20" y2="18"/><text x="2.5" y="8.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">1</text><text x="2.5" y="14.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">2</text><text x="2.5" y="20.5" font-size="7" fill="currentColor" stroke="none" font-family="sans-serif">3</text></symbol>
+      <symbol id="i-hr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/></symbol>
+      <symbol id="i-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></symbol>
+      <symbol id="i-align-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="10" height="7" rx="1"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="19" x2="21" y2="19"/></symbol>
+      <symbol id="i-align-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="11" y="4" width="10" height="7" rx="1"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="19" x2="21" y2="19"/></symbol>
+      <symbol id="i-align-center" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="4" width="10" height="7" rx="1"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="19" x2="21" y2="19"/></symbol>
+      <symbol id="i-align-full" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="1"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="3" y1="19" x2="21" y2="19"/></symbol>
+      <symbol id="i-grip" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></symbol>
+    </defs>
+  </svg>
+
+  <!-- ===================== MEDIA TOKEN INSERT POPOVER (shared by every split-view editor) ===================== -->
+  <div class="media-token-backdrop" id="mediaTokenBackdrop">
+    <div class="media-token-box">
+      <h3 id="mediaTokenTitle">Insert image</h3>
+      <div class="media-token-tabs">
+        <button type="button" class="is-active" data-tab="upload">Upload</button>
+        <button type="button" data-tab="url">Paste URL</button>
+        <button type="button" data-tab="gallery">Media Library</button>
+      </div>
+      <div class="media-token-tab-panel" data-tab-panel="upload">
+        <div class="file-drop" id="mediaTokenDrop">
+          <svg aria-hidden="true"><use href="#i-upload"/></svg>
+          <div><strong>Click to choose</strong> or drag a file here</div>
+          <div class="file-name" id="mediaTokenFileName"></div>
+        </div>
+        <input type="file" id="mediaTokenFileInput" accept="image/*" hidden>
+      </div>
+      <div class="media-token-tab-panel" data-tab-panel="url" hidden>
+        <div class="field" style="margin:0;">
+          <input type="text" id="mediaTokenUrlInput" placeholder="https://… or assets/img/…">
+        </div>
+      </div>
+      <div class="media-token-tab-panel" data-tab-panel="gallery" hidden>
+        <div id="mediaTokenGalleryList" class="media-token-gallery-list"></div>
+        <p class="hint" id="mediaTokenGalleryEmpty">No media uploaded yet — use the Upload tab.</p>
+      </div>
+      <div class="field" style="margin-top:14px; margin-bottom:10px;">
+        <label for="mediaTokenAlt">Alt text / caption</label>
+        <input type="text" id="mediaTokenAlt" placeholder="Short description">
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <label for="mediaTokenSize">Size: <span id="mediaTokenSizeVal">60%</span></label>
+        <input type="range" id="mediaTokenSize" min="20" max="100" step="5" value="60" style="width:100%;">
+      </div>
+      <div class="media-token-actions">
+        <button type="button" class="btn" id="mediaTokenCancelBtn">Cancel</button>
+        <button type="button" class="btn btn-primary" id="mediaTokenInsertBtn"><svg aria-hidden="true"><use href="#i-check"/></svg>Insert</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-shell">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-mark">∫</div>
+        <div>
+          <div class="admin-brand-text">Content Admin</div>
+          <div class="admin-brand-sub">Academic Portal CMS</div>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <button class="admin-nav-btn is-active" data-view="items"><svg aria-hidden="true"><use href="#i-grid"/></svg>All Items</button>
+        <button class="admin-nav-btn" data-view="editor"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add New Item</button>
+        <button class="admin-nav-btn" data-view="fields"><svg aria-hidden="true"><use href="#i-tag"/></svg>Fields</button>
+        <button class="admin-nav-btn" data-view="settings"><svg aria-hidden="true"><use href="#i-gear"/></svg>GitHub Settings</button>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode" style="align-self:flex-start;">
+          <svg class="icon-sun" aria-hidden="true"><use href="#i-sun"/></svg>
+          <svg class="icon-moon" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+        <div class="conn-status" id="connStatus">
+          <span class="conn-dot"></span>
+          <span id="connStatusText">Not connected</span>
+        </div>
+        <a class="btn" href="index.html" style="justify-content:center;">
+          <svg aria-hidden="true"><use href="#i-back"/></svg> View Site
+        </a>
+      </div>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="admin-main">
+
+      <!-- ---------- ITEMS LIST ---------- -->
+      <section class="admin-view is-active" data-view="items">
+        <div class="admin-header">
+          <div>
+            <h2>All Items</h2>
+            <p>Everything currently in <span class="mono">data.json</span>, across all five content types.</p>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button class="btn" id="refreshItemsBtn"><svg aria-hidden="true"><use href="#i-cloud"/></svg>Reload from GitHub</button>
+            <button class="btn btn-primary" id="newItemBtn"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add New Item</button>
+          </div>
+        </div>
+
+        <div class="settings-card" id="aboutCard" style="max-width:680px; margin-bottom:22px;">
+          <div class="field" style="margin-bottom:14px;">
+            <label>About page profile picture</label>
+            <p class="hint" style="margin-top:0; margin-bottom:10px;">Shown next to your name in the sidebar and on the public About page.</p>
+          </div>
+          <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
+            <img id="avatarPreview" src="" alt="" hidden style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:1px solid var(--border-strong); flex-shrink:0;">
+            <div style="flex:1; min-width:220px;">
+              <div class="file-drop" id="avatarDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag an image here</div>
+                <div class="file-name" id="avatarFileName"></div>
+              </div>
+              <input type="file" id="avatarFileInput" accept="image/*" hidden>
+              <div class="field" style="margin-top:12px; margin-bottom:0;">
+                <label for="s-avatar-url">Or paste an existing image URL</label>
+                <input type="text" id="s-avatar-url" placeholder="assets/img/profile.jpg">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-list-toolbar" id="itemsToolbar">
+          <div class="search-field admin-search-field">
+            <svg aria-hidden="true"><use href="#i-grid"/></svg>
+            <input type="text" id="itemsSearchInput" placeholder="Search title, description, tags…" autocomplete="off">
+          </div>
+          <select id="itemsStatusFilter" class="mini-select">
+            <option value="">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+          </select>
+          <select id="itemsTypeFilter" class="mini-select">
+            <option value="">All types</option>
+            <option value="problem">Solved Problem</option>
+            <option value="story">Essay / Story</option>
+            <option value="code">Code &amp; Animation</option>
+            <option value="youtube">YouTube Video</option>
+            <option value="pdf">PDF Document</option>
+            <option value="course">Course / Playlist</option>
+          </select>
+          <select id="itemsFieldFilter" class="mini-select">
+            <option value="">All fields</option>
+          </select>
+          <div class="bulk-bar" id="bulkBar" hidden>
+            <span id="bulkCount">0 selected</span>
+            <select id="bulkStatusSelect" class="mini-select">
+              <option value="">Set status…</option>
+              <option value="published">Mark Published</option>
+              <option value="draft">Mark Draft</option>
+            </select>
+            <button type="button" class="btn btn-danger" id="bulkDeleteBtn"><svg aria-hidden="true"><use href="#i-trash"/></svg>Delete</button>
+          </div>
+        </div>
+
+        <div class="item-table" id="itemTable">
+          <div class="item-row item-head">
+            <div class="it-check"><input type="checkbox" id="selectAllItems" aria-label="Select all"></div>
+
+            <div>Type</div>
+            <div>Title</div>
+            <div>Status</div>
+            <div>Date</div>
+            <div style="text-align:right;">Actions</div>
+          </div>
+          <div id="itemRows"></div>
+        </div>
+      </section>
+
+      <!-- ---------- EDITOR ---------- -->
+      <section class="admin-view" data-view="editor">
+        <div class="admin-header">
+          <div>
+            <h2 id="editorHeading">Add New Item</h2>
+            <p>Pick a content type — the fields below change to match. Changes are staged locally until you commit.</p>
+          </div>
+        </div>
+
+        <div class="autosave-banner" id="autosaveBanner" hidden>
+          <svg aria-hidden="true"><use href="#i-info"/></svg>
+          <span id="autosaveBannerText"></span>
+          <div class="autosave-banner-actions">
+            <button type="button" class="btn btn-primary" id="autosaveRestoreBtn">Restore</button>
+            <button type="button" class="btn" id="autosaveDiscardBtn">Discard</button>
+          </div>
+        </div>
+
+        <form class="settings-card" id="itemForm" style="max-width:680px;">
+          <input type="hidden" id="f-id">
+          <input type="hidden" id="f-sourcetype">
+
+          <!-- Fields of Mathematics — pre-defined suggestions used by the "Field of Mathematics"
+               text input (Azerbaijani/English course names) and by the tag input below. -->
+          <datalist id="fieldsOfMathList">
+            <option value="Algebra"><option value="Complex Analysis"><option value="Geometry">
+            <option value="Lebesgue Integral & Measure"><option value="Mathematical Logic">
+            <option value="Mathematical Statistics"><option value="Numerical Analysis">
+            <option value="ODE"><option value="PDE"><option value="Probability">
+            <option value="Real Analysis"><option value="Topology">
+          </datalist>
+          <datalist id="fieldsOfMathTagList">
+            <option value="algebra"><option value="complex-analysis"><option value="geometry">
+            <option value="lebesgue-integral-and-measure"><option value="mathematical-logic">
+            <option value="mathematical-statistics"><option value="numerical-analysis">
+            <option value="ordinary-differential-equations"><option value="partial-differential-equations">
+            <option value="probability"><option value="real-analysis"><option value="topology">
+          </datalist>
+
+          <div class="field">
+            <label for="f-type">Content type</label>
+            <select id="f-type">
+              <option value="problem">Solved Problem</option>
+              <option value="story">Essay / Story</option>
+              <option value="code">Code &amp; Animation</option>
+              <option value="youtube">YouTube Video</option>
+              <option value="pdf">PDF Document</option>
+              <option value="course">Course / Playlist</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="f-title">Title</label>
+            <input type="text" id="f-title" placeholder="e.g. Filippov № 64: Xətti Diferensial Tənliyin Həlli" required>
+          </div>
+
+          <!-- Universal optional media gallery — available on every content type -->
+          <div class="field">
+            <label>Additional media — images &amp; video (optional)</label>
+            <p class="hint" style="margin-top:0;">Drag files in or paste a URL. Each item can be aligned left/center/right or shown full-width, and resized.</p>
+            <div id="mediaManagerList" class="media-manager-list"></div>
+            <div class="media-drop-mini" id="mediaDropZone" style="margin-top:10px;">
+              <strong>Click</strong> or drag image/video files here to add
+            </div>
+            <input type="file" id="mediaFileInput" accept="image/*,video/*" hidden multiple>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button type="button" class="btn" id="addMediaUrlBtn">
+                <svg aria-hidden="true"><use href="#i-plus"/></svg>Add by URL
+              </button>
+              <button type="button" class="btn" id="browseMediaLibraryBtn">
+                <svg aria-hidden="true"><use href="#i-image"/></svg>Browse Library
+              </button>
+            </div>
+          </div>
+
+          <!-- Problem fields -->
+          <div class="type-fields" data-type-fields="problem">
+            <div class="field">
+              <label for="f-question">Question (LaTeX + text — wrap math in $...$ or $$...$$)</label>
+              <div class="split-editor" data-textarea="f-question" data-preview="questionPreview">
+                <div class="split-editor-toolbar" data-toolbar="full"></div>
+                <div class="split-editor-panes">
+                  <textarea id="f-question" class="serif-textarea" placeholder="Tənliyi həll edin: $$y' - y/x = x$$"></textarea>
+                  <div class="live-preview" id="questionPreview"><span class="ph">Live preview appears here</span></div>
+                </div>
+              </div>
+              <p class="hint">Blank lines start a new paragraph. Toolbar shortcuts: <span class="mono"># / ## / ###</span> headings, <span class="mono">&gt; quote</span>, <span class="mono">- list</span>, <span class="mono">1. list</span>, <span class="mono">---</span> divider, plus image/video placement.</p>
+            </div>
+
+            <div class="field" style="margin-top:18px;">
+              <label for="f-solution">Solution (Overleaf-style — same syntax as above)</label>
+              <div class="split-editor" data-textarea="f-solution" data-preview="solutionPreview">
+                <div class="split-editor-toolbar" data-toolbar="full"></div>
+                <div class="split-editor-panes">
+                  <textarea id="f-solution" class="serif-textarea" placeholder="### 1. Addım&#10;&#10;İzah mətni... $$formula$$"></textarea>
+                  <div class="live-preview" id="solutionPreview"><span class="ph">Live preview appears here</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Story fields (essays, biographies, personal reflections, cross-disciplinary writing) -->
+          <div class="type-fields" data-type-fields="story">
+            <div class="field">
+              <label for="f-content">Content</label>
+              <div class="split-editor" data-textarea="f-content" data-preview="contentPreview">
+                <div class="split-editor-toolbar" data-toolbar="full"></div>
+                <div class="split-editor-panes">
+                  <textarea id="f-content" class="serif-textarea" style="min-height:220px;" placeholder="Bioqrafiya, şəxsi düşüncə, elmi-kütləvi yazı... blank sətirlər yeni paraqraf yaradır."></textarea>
+                  <div class="live-preview" id="contentPreview"><span class="ph">Live preview appears here</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="field" style="margin-top:18px;">
+              <label for="f-image">Cover image URL (optional)</label>
+              <input type="text" id="f-image" placeholder="assets/img/kakeya-cover.jpg">
+            </div>
+            <div class="field" style="margin-top:18px;">
+              <label>Additional images (optional)</label>
+              <p class="hint" style="margin-top:0;">e.g. mathematical diagrams, a portrait, plots. Each can be placed inline, as a full-width divider, or wrapped left/right of the text.</p>
+              <div id="storyImagesList" class="story-images-list"></div>
+              <button type="button" class="btn" id="addStoryImageBtn" style="margin-top:10px;">
+                <svg aria-hidden="true"><use href="#i-plus"/></svg>Add Image
+              </button>
+            </div>
+          </div>
+
+          <!-- Code & Animation fields -->
+          <div class="type-fields" data-type-fields="code">
+            <div class="field">
+              <label for="f-language">Language / Tool</label>
+              <select id="f-language">
+                <option value="Manim">Manim</option>
+                <option value="MATLAB">MATLAB</option>
+                <option value="Python">Python</option>
+                <option value="C++">C++</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-code-snippet">Code snippet</label>
+              <textarea id="f-code-snippet" placeholder="Kodu buraya yapışdırın…" style="min-height:160px;"></textarea>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="f-animation-url">Animation / video URL (optional)</label>
+                <input type="url" id="f-animation-url" placeholder="https://youtu.be/…">
+              </div>
+              <div class="field">
+                <label for="f-github-url">GitHub URL (optional)</label>
+                <input type="url" id="f-github-url" placeholder="https://github.com/…">
+              </div>
+            </div>
+            <div class="field">
+              <label>Custom thumbnail (optional)</label>
+              <div class="file-drop" id="codeThumbDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag a cover image here</div>
+                <div class="file-name" id="codeThumbFileName"></div>
+              </div>
+              <input type="file" id="codeThumbFileInput" accept="image/*" hidden>
+              <p class="hint">Uploaded to <span class="mono">assets/img/</span> on commit — or paste an existing URL below. Leave both blank to use the default language icon.</p>
+            </div>
+            <div class="field">
+              <label for="f-code-thumb">Thumbnail URL</label>
+              <input type="text" id="f-code-thumb" placeholder="assets/img/lotka-volterra-cover.jpg">
+            </div>
+          </div>
+
+          <!-- YouTube fields -->
+          <div class="type-fields" data-type-fields="youtube">
+            <div class="field">
+              <label for="f-video-url">YouTube URL</label>
+              <input type="url" id="f-video-url" placeholder="https://youtu.be/…">
+              <p class="hint">The thumbnail is generated automatically from the video ID.</p>
+            </div>
+            <div class="field">
+              <label for="f-yt-desc">Description</label>
+              <textarea id="f-yt-desc" style="min-height:80px; font-family:inherit; font-size:0.9rem;"></textarea>
+            </div>
+          </div>
+
+          <!-- PDF fields -->
+          <div class="type-fields" data-type-fields="pdf">
+            <div class="field">
+              <label>PDF file</label>
+              <div class="file-drop" id="pdfDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag a PDF here</div>
+                <div class="file-name" id="pdfFileName"></div>
+              </div>
+              <input type="file" id="pdfFileInput" accept="application/pdf" hidden>
+              <p class="hint">Uploaded to <span class="mono" id="pdfAssetPathHint">assets/pdf/</span> on commit. Or paste an existing path/URL below.</p>
+            </div>
+            <div class="field">
+              <label for="f-pdf-url">PDF path or URL</label>
+              <input type="text" id="f-pdf-url" placeholder="assets/pdf/my-notes.pdf">
+            </div>
+            <div class="field">
+              <label>Thumbnail image (optional)</label>
+              <div class="file-drop" id="pdfThumbDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag a cover image here</div>
+                <div class="file-name" id="pdfThumbFileName"></div>
+              </div>
+              <input type="file" id="pdfThumbFileInput" accept="image/*" hidden>
+              <p class="hint">Uploaded to <span class="mono">assets/img/</span> on commit — or paste an existing URL below. Leave both blank to use the default document icon.</p>
+            </div>
+            <div class="field">
+              <label for="f-pdf-thumb">Thumbnail URL</label>
+              <input type="text" id="f-pdf-thumb" placeholder="assets/img/my-notes-cover.jpg">
+            </div>
+          </div>
+
+          <!-- Course / Playlist fields -->
+          <div class="type-fields" data-type-fields="course">
+            <div class="field">
+              <label for="f-course-desc">Description</label>
+              <div class="split-editor" data-textarea="f-course-desc" data-preview="courseDescPreview">
+                <div class="split-editor-toolbar" data-toolbar="basic"></div>
+                <div class="split-editor-panes">
+                  <textarea id="f-course-desc" style="min-height:160px; font-family:inherit; font-size:0.9rem;" placeholder="Bu kursun qısa təsviri…"></textarea>
+                  <div class="live-preview" id="courseDescPreview"><span class="ph">Live preview appears here</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label>Course cover thumbnail (optional)</label>
+              <div class="file-drop" id="courseCoverDrop">
+                <svg aria-hidden="true"><use href="#i-upload"/></svg>
+                <div><strong>Click to choose</strong> or drag a cover image here</div>
+                <div class="file-name" id="courseCoverFileName"></div>
+              </div>
+              <input type="file" id="courseCoverFileInput" accept="image/*" hidden>
+            </div>
+            <div class="field">
+              <label for="f-course-cover-url">Cover thumbnail URL</label>
+              <input type="text" id="f-course-cover-url" placeholder="assets/img/course-cover.jpg">
+            </div>
+
+            <div class="field" style="margin-top:22px;">
+              <label>Lessons</label>
+              <p class="hint" style="margin-top:0;">Set the display order explicitly with the order number. PDF notes, YouTube link, GitHub link, and a code snippet are all optional per lesson — leave any blank to omit it on the public page.</p>
+              <div id="lessonsEditorList" class="lessons-editor-list"></div>
+              <button type="button" class="btn" id="addLessonBtn" style="margin-top:12px;">
+                <svg aria-hidden="true"><use href="#i-plus"/></svg>Add Lesson
+              </button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Status</label>
+            <div class="status-toggle" id="statusToggle">
+              <button type="button" class="status-toggle-btn is-active" data-status="published">
+                <svg aria-hidden="true"><use href="#i-check"/></svg>Published
+              </button>
+              <button type="button" class="status-toggle-btn" data-status="draft">
+                <svg aria-hidden="true"><use href="#i-edit"/></svg>Draft
+              </button>
+            </div>
+            <input type="hidden" id="f-status" value="published">
+            <p class="hint">Drafts are saved and committed like normal items, but stay hidden from the public site until switched to Published.</p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="f-date">Date &amp; time</label>
+              <input type="datetime-local" id="f-date">
+            </div>
+            <div class="field">
+              <label>Fields of Mathematics</label>
+              <div class="fields-picker" id="fieldsPicker"></div>
+              <p class="hint">Click to tag this item by field — select as many as apply. Drives the public Filters panel and the field badges shown on cards.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="f-tags-input">Other tags</label>
+            <div class="tag-input-row" id="tagInputRow">
+              <input type="text" id="f-tags-input" list="fieldsOfMathTagList" placeholder="Type a tag, press Enter">
+            </div>
+            <p class="hint">Anything besides a Field of Mathematics — e.g. <span class="mono">guest-talk</span>, <span class="mono">exam-prep</span>, <span class="mono">cauchy-problem</span>.</p>
+          </div>
+
+          <div class="field" style="display:flex; gap:10px; margin-top:6px;">
+            <button type="submit" class="btn btn-primary"><svg aria-hidden="true"><use href="#i-check"/></svg>Save to List</button>
+            <button type="button" class="btn" id="cancelEditBtn">Cancel</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ---------- FIELDS OF MATHEMATICS MANAGER ---------- -->
+      <section class="admin-view" data-view="fields">
+        <div class="admin-header">
+          <div>
+            <h2>Fields of Mathematics</h2>
+            <p>Create, rename, or remove fields. They sync automatically to the "Field of Mathematics" suggestions and the sidebar's Filters panel across every section.</p>
+          </div>
+        </div>
+        <div class="settings-card" style="max-width:680px;">
+          <div class="fields-manager-list" id="fieldsManagerList"></div>
+          <div class="fields-add-row">
+            <input type="text" id="newFieldLabel" placeholder="Field name, e.g. Combinatorics">
+            <span class="mono" id="newFieldSlugPreview" style="font-size:0.78rem;color:var(--ink-faint);"></span>
+            <button type="button" class="btn btn-primary" id="addFieldBtn"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add Field</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- SETTINGS ---------- -->
+      <section class="admin-view" data-view="settings">
+        <div class="admin-header">
+          <div>
+            <h2>GitHub Settings</h2>
+            <p>Connect a Personal Access Token so changes can be committed straight to your repository.</p>
+          </div>
+        </div>
+
+        <form class="settings-card" id="settingsForm">
+          <div class="field">
+            <label for="s-token">Personal Access Token</label>
+            <div class="pw-wrap">
+              <input type="password" id="s-token" placeholder="ghp_…">
+              <button type="button" id="togglePw" aria-label="Show token">
+                <svg aria-hidden="true"><use href="#i-eye"/></svg>
+              </button>
+            </div>
+            <p class="hint">Fine-grained token with read/write access to Contents on this one repo. Stored only in this browser's localStorage — never sent anywhere but api.github.com.</p>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="s-owner">Repository owner</label>
+              <input type="text" id="s-owner" placeholder="goradalovanur-bit">
+            </div>
+            <div class="field">
+              <label for="s-repo">Repository name</label>
+              <input type="text" id="s-repo" placeholder="goradalovanur-bit.github.io">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="s-branch">Branch</label>
+              <input type="text" id="s-branch" placeholder="main">
+            </div>
+            <div class="field">
+              <label for="s-datapath">Path to data.json</label>
+              <input type="text" id="s-datapath" placeholder="data.json">
+            </div>
+          </div>
+          <div class="field">
+            <label for="s-assetpath">PDF asset folder</label>
+            <input type="text" id="s-assetpath" placeholder="assets/pdf/">
+          </div>
+          <div class="field" style="display:flex; gap:10px;">
+            <button type="submit" class="btn btn-primary"><svg aria-hidden="true"><use href="#i-check"/></svg>Save &amp; Test Connection</button>
+            <button type="button" class="btn btn-danger" id="clearTokenBtn">Clear Token</button>
+          </div>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===================== COMMIT BAR ===================== -->
+  <div class="settings-card" id="commitBar" style="position:fixed; bottom:22px; left:50%; transform:translateX(-50%); display:none; z-index:150; padding:14px 18px; max-width:560px; width:calc(100% - 44px); flex-direction:column; gap:10px;">
+    <div style="display:flex; align-items:center; gap:14px; justify-content:space-between;">
+      <span style="font-size:0.86rem; font-weight:600;" id="commitBarText">You have unsaved local changes.</span>
+      <div style="display:flex; gap:8px;">
+        <button class="btn" id="copyPayloadBtn"><svg aria-hidden="true"><use href="#i-copy"/></svg>Copy JSON</button>
+        <button class="btn btn-primary" id="commitBtn"><svg aria-hidden="true"><use href="#i-cloud"/></svg>Commit to GitHub</button>
+      </div>
+    </div>
+    <div class="commit-progress" id="commitProgress" hidden>
+      <div class="commit-progress-track"><div class="commit-progress-fill" id="commitProgressFill"></div></div>
+      <span class="commit-progress-label" id="commitProgressLabel"></span>
+    </div>
+  </div>
+
+  <!-- ===================== TOASTS ===================== -->
+  <div class="toast-stack" id="toastStack"></div>
+
+  <!-- ===================== IMAGE CROPPER MODAL ===================== -->
+  <div class="cropper-backdrop" id="cropperBackdrop">
+    <div class="cropper-box">
+      <h3>Crop image</h3>
+      <div class="cropper-aspect-row" id="cropperAspectRow">
+        <button type="button" data-aspect="free" class="is-active">Freeform</button>
+        <button type="button" data-aspect="1:1">1:1</button>
+        <button type="button" data-aspect="16:9">16:9</button>
+        <button type="button" data-aspect="4:3">4:3</button>
+      </div>
+      <div class="cropper-stage" id="cropperStage">
+        <img id="cropperImg" src="" alt="">
+      </div>
+      <div class="cropper-zoom-row">
+        <svg aria-hidden="true"><use href="#i-crop"/></svg>
+        <input type="range" id="cropperZoom" min="100" max="300" step="1" value="100">
+      </div>
+      <p class="cropper-hint">Drag the image to reposition it. The visible frame is what gets saved — compressed to WebP, capped at 1600px wide.</p>
+      <div class="cropper-actions">
+        <button type="button" class="btn" id="cropperCancelBtn">Skip cropping</button>
+        <button type="button" class="btn btn-primary" id="cropperApplyBtn"><svg aria-hidden="true"><use href="#i-crop"/></svg>Apply Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MEDIA LIBRARY MODAL (reuse any previously-uploaded asset) ===================== -->
+  <div class="media-token-backdrop" id="mediaLibraryBackdrop">
+    <div class="media-token-box">
+      <h3>Media Library</h3>
+      <p class="hint" style="margin-top:-6px;">Every image and video already used anywhere on the site. Click one to reuse it here — nothing is re-uploaded.</p>
+      <div id="mediaLibraryList" class="media-token-gallery-list" style="grid-template-columns:repeat(5, 1fr); max-height:320px;"></div>
+      <p class="hint" id="mediaLibraryEmpty">No media uploaded yet.</p>
+      <div class="media-token-actions">
+        <button type="button" class="btn" id="mediaLibraryCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+
+</html>
